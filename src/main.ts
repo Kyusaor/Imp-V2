@@ -1,5 +1,5 @@
 import { Client } from "discord.js";
-import Config from "./data/config";
+import Config from "../data/config";
 
 let bot = new Client(Config.clientParam);
 
