@@ -1,4 +1,4 @@
-import { Client } from "discord.js";
+import { Client, Guild, User } from "discord.js";
 import { Config } from "../data/config.js";
 import { Constants } from "./core/models/constants.js";
 import { Methods } from "./core/models/methods.js";
@@ -8,7 +8,7 @@ import { Utils } from "./core/utils.js";
 
 
 //Var initialization
-let kyu, ImpServer;
+let kyu:User, ImpServer:Guild;
 let bot = new Client(Config.clientParam);
 bot.login(Config.token);
 
