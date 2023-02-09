@@ -1,4 +1,4 @@
-import { Guild, GuildMember, Snowflake } from "discord.js";
+import { GuildMember} from "discord.js";
 
 export class MemberIncome {
 
