@@ -5,15 +5,15 @@ import { Methods } from "./methods.js";
 
 export class MemberIncome {
 
-    member: GuildMember;
-    nickname: string | undefined;
-    guild: "imp" | "invited"
+    private _member: GuildMember;
+    private _nickname: string | undefined;
+    private _guild: "imp" | "invited"
 
 
     constructor(member: GuildMember, nick: string | undefined, guild: "imp" | "invited") {
-        this.member = member;
-        this.nickname = nick;
-        this.guild = guild;
+        this._member = member;
+        this._nickname = nick;
+        this._guild = guild;
     }
 
     async createModal(member: GuildMember) {
