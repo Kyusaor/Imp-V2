@@ -1,6 +1,25 @@
-import { ActionRowBuilder, GuildMember, ModalActionRowComponentBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } from "discord.js";
+import { ActionRowBuilder, CommandInteraction, GuildMember, ModalActionRowComponentBuilder, ModalBuilder, SlashCommandBuilder, TextInputBuilder, TextInputStyle } from "discord.js";
+import { readdirSync } from "fs";
 
-export abstract class Methods {
+export class Methods {
+
+    static async commandFetching () {
+        const commandFiles = readdirSync('./src/core/commands/');
+        var commandsData = [];
+
+        for(let i of commandFiles){
+            let file = await import(`../commands/${i.slice(0, -3)}.js`);
+            if(!file) continue;
+            commandsData.push(file.CommandBuilder)
+        }
+
+        console.log(commandsData)
+    }
+
+    //Command handler
+    static commandInteractionHandler(intera: CommandInteraction) {
+
+    }
 
     //Build standard modal when a new member arrives
     static constructModal (member: GuildMember){
@@ -23,4 +42,5 @@ export abstract class Methods {
 
         return modal;
     }
+    
 }
