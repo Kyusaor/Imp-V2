@@ -20,6 +20,6 @@ export class MemberIncome {
         let validChannel = await bot.channels.fetch(Constants.channelsId.VALIDATION_CHANNEL) as TextChannel;
         if(!validChannel) throw "No valid channel found (MemberIncomecreateModal)";
 
-        let payload = await Methods.constructModal(member);
+        let payload = await Methods.constructIncomeModal(member);
     }
 }
