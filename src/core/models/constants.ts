@@ -2,6 +2,7 @@ export abstract class Constants {
 
     static readonly kyu = "370293090407153665"
     static readonly ImpServerId = "681643180587876367"
+    static readonly botId = "533662476215255041"
 
     static readonly channelsId = {
         VALIDATION_CHANNEL: "1073252249926631425",
