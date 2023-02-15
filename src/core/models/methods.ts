@@ -22,7 +22,7 @@ export class Methods {
     }
 
     //Build standard modal when a new member arrives
-    static constructModal (member: GuildMember){
+    static constructIncomeModal (member: GuildMember){
 
         let memberId = member.user.id;
 
