@@ -8,7 +8,7 @@ let commands = [];
 let commandsFiles = readdirSync('./src/core/commands/')
 
 for(const file of commandsFiles){
-    const command = await import(`./core/commands/${file}`);
+    const command = await import(`./core/commands/${file.slice(0, -3)}.js`);
     commands.push(command.CommandBuilder.toJSON())
 }
 
@@ -32,21 +32,27 @@ if(todo) {
 		console.log(`${data.length} commandes rechargées avec succès`);
     } 
     catch (e) {
-
+        console.log("erreur deploy")
+        console.log(e)
     }
 }
 
 //Delete
 else {
-    rest.get(Routes.applicationCommands(Constants.botId))
-    .then(data => {
-        const promises:Promise<unknown>[] = [];
-        for (const command of data as any) {
-            const deleteUrl = `/${Routes.applicationCommands(Constants.botId)}/${command.id}`;
-            promises.push(rest.delete(deleteUrl));
-        }
-        return Promise.all(promises);
+    try {
+        rest.get(Routes.applicationCommands(Constants.botId))
+        .then(data => {
+            const promises:Promise<unknown>[] = [];
+            for (const command of data as any) {
+                const deleteUrl = `/${Routes.applicationCommands(Constants.botId)}/${command.id}`;
+                promises.push(rest.delete(deleteUrl as `/${string}`));
+            }
+                return Promise.all(promises);
+            }
+        );
     }
-);
-
+    catch (e) {
+        console.log("Erreur sup deploy")
+        console.log(e)
+    }
 }
