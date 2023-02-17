@@ -7,6 +7,7 @@ import { BotText } from "./core/text/botText.js";
 import { Utils } from "./core/utils.js";
 
 
+
 //Var initialization
 let kyu:User
 let ImpServer:Guild;
@@ -14,6 +15,7 @@ let errorsChannel: TextBasedChannel;
 
 let bot = new Client(Config.clientParam);
 bot.login(Config.token);
+
 
 
 //Executed at boot
@@ -24,8 +26,9 @@ bot.on('ready', async () => {
     console.log(Utils.displayConsoleHour() + bot.user?.username + BotText.console.READY);
 });
 
-//Script execution
 
+
+//Script execution
 bot.on('interactionCreate', async intera => {
     try {
         if(intera.isChatInputCommand()) await Methods.commandInteractionHandler(intera);
@@ -35,6 +38,9 @@ bot.on('interactionCreate', async intera => {
     }
 });
 
+
+
+//Utils functions
 async function sendErrorLog(error: unknown) {
     console.log(error);
     if (error instanceof Error && error.stack)
