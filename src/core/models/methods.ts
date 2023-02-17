@@ -1,12 +1,16 @@
 import { 
     ActionRowBuilder,
+    AnySelectMenuInteraction,
     CommandInteraction,
     GuildMember,
     ModalActionRowComponentBuilder,
     ModalBuilder,
+    TextChannel,
     TextInputBuilder,
     TextInputStyle 
 } from "discord.js";
+import { bot } from "../../main.js";
+import { Constants } from "./constants.js";
 
 export class Methods {
 
@@ -42,4 +46,11 @@ export class Methods {
         return modal;
     }
     
+    static async newMemberManager (intera: AnySelectMenuInteraction) {
+    }
+
+    static async selectMenuInteractionHandler (intera: AnySelectMenuInteraction) {
+        if(intera.customId == "r4-select")
+            await this.newMemberManager(intera);
+    }
 }
