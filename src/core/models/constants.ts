@@ -9,4 +9,8 @@ export abstract class Constants {
         R4_CHECKOUT: "802883413806940172",
         ERRORS_LOGS: "1076152712384745492"
     }
+
+    static readonly rolesId = {
+        R4: "681645771678154752"
+    }
 }
