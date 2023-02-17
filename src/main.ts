@@ -32,6 +32,7 @@ bot.on('ready', async () => {
 bot.on('interactionCreate', async intera => {
     try {
         if(intera.isChatInputCommand()) await Methods.commandInteractionHandler(intera);
+        if(intera.isAnySelectMenu()) await Methods.selectMenuInteractionHandler(intera);
     }
     catch (error) {
         await sendErrorLog(error);
