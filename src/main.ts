@@ -28,7 +28,7 @@ bot.on('ready', async () => {
 
 bot.on('interactionCreate', async intera => {
     try {
-        if(intera.isChatInputCommand()) Methods.commandInteractionHandler(intera);
+        if(intera.isChatInputCommand()) await Methods.commandInteractionHandler(intera);
     }
     catch (error) {
         await sendErrorLog(error);
