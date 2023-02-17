@@ -17,8 +17,13 @@ export class Methods {
     }
 
     //Command handler
-    static commandInteractionHandler(intera: CommandInteraction) {
+    static async commandInteractionHandler(intera: CommandInteraction) {
 
+        let commandFile = await import(`../commands/${intera.command?.name.toLowerCase()}`);
+        if(!commandFile) 
+            return intera.reply("Module de commande indisponible");
+        await commandFile.run(intera);
+        
     }
 
     //Build standard modal when a new member arrives
