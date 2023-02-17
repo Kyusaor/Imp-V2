@@ -19,7 +19,7 @@ export class Methods {
     //Command handler
     static async commandInteractionHandler(intera: CommandInteraction) {
 
-        let commandFile = await import(`../commands/${intera.command?.name.toLowerCase()}`);
+        let commandFile = await import(`../commands/${intera.command?.name.toLowerCase()}.js`);
         if(!commandFile) 
             return intera.reply("Module de commande indisponible");
         await commandFile.run(intera);
