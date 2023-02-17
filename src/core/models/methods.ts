@@ -1,20 +1,14 @@
-import { ActionRowBuilder, CommandInteraction, GuildMember, ModalActionRowComponentBuilder, ModalBuilder, SlashCommandBuilder, TextInputBuilder, TextInputStyle } from "discord.js";
-import { readdirSync } from "fs";
+import { 
+    ActionRowBuilder,
+    CommandInteraction,
+    GuildMember,
+    ModalActionRowComponentBuilder,
+    ModalBuilder,
+    TextInputBuilder,
+    TextInputStyle 
+} from "discord.js";
 
 export class Methods {
-
-    static async commandFetching () {
-        const commandFiles = readdirSync('./src/core/commands/');
-        var commandsData = [];
-
-        for(let i of commandFiles){
-            let file = await import(`../commands/${i.slice(0, -3)}.js`);
-            if(!file) continue;
-            commandsData.push(file.CommandBuilder)
-        }
-
-        console.log(commandsData)
-    }
 
     //Command handler
     static async commandInteractionHandler(intera: CommandInteraction) {
