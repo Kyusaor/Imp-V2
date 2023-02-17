@@ -27,7 +27,7 @@ function constructIncomeEmbed () {
     return embed;
 }
 
-function constructIncomeMenu (r4list: string[]) {
+function constructIncomeMenu (r4list: string[][]) {
 
     let menu = new StringSelectMenuBuilder()
         .setCustomId(`r4-select`)
@@ -35,9 +35,9 @@ function constructIncomeMenu (r4list: string[]) {
 
     for(let r4 of r4list){
         menu.addOptions({
-            label: r4,
+            label: r4[0],
             description: " ",
-            value: r4,
+            value: r4[1],
         })
     }
 
@@ -49,7 +49,7 @@ async function listR4() {
     await ImpServer.members.list({ limit: 300 });
     let r4list = await ImpServer.members.cache
         .filter(m => m.roles.cache.has(Constants.rolesId.R4))
-        .map(m => m.nickname || m.user.username);
-    r4list.push("Quelqu'un d'autre");
+        .map(m => [m.nickname || m.user.username, m.user.id.toString()]);
+    r4list.push(["Quelqu'un d'autre", `&${Constants.rolesId.R4}`]);
     return r4list;
 }
