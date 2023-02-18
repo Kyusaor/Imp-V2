@@ -13,4 +13,10 @@ export abstract class Constants {
     static readonly rolesId = {
         R4: "681645771678154752"
     }
+
+    static readonly text = {
+        console: {
+            READY: " connecté"
+        }
+    }
 }
