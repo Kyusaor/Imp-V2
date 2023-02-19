@@ -54,6 +54,7 @@ export class Methods {
         return modal;
     }
 
+    //Manage changing nickname to modal reception
     static async modalSubmitManager(modal: ModalSubmitInteraction) {
         modal.reply({content: Constants.text.newMember.endNickname, ephemeral: true});
         let nick = modal.fields.getTextInputValue(`${modal.user.id}-incomeModal-nick`);
@@ -62,12 +63,14 @@ export class Methods {
         return member.setNickname(nick);
     }
     
+    //Executed when a new member join
     static async newMemberHandler(member: GuildMember) {
         let r4CheckoutChannel = await bot.channels.fetch(Constants.channelsId.R4_CHECKOUT) as TextChannel;
         let newMemberEmbedRole = newMemberEmbedRoleBuilder(member.user);
         r4CheckoutChannel.send(newMemberEmbedRole);
     }
 
+    //Select menu handler
     static async selectMenuInteractionHandler (intera: AnySelectMenuInteraction) {
         if(intera.customId == "r4-select"){
             let r4CheckoutChannel = await bot.channels.fetch(Constants.channelsId.R4_CHECKOUT) as TextChannel;
