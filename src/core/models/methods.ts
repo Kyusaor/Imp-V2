@@ -46,6 +46,7 @@ export class Methods {
                         .setStyle(TextInputStyle.Short)
                         .setMaxLength(32)
                         .setMinLength(2)
+                        .setRequired(true)
                     )
             ])
 
