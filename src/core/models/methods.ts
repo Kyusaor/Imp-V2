@@ -4,6 +4,7 @@ import {
     ButtonBuilder,
     ButtonStyle,
     CommandInteraction,
+    ComponentType,
     EmbedBuilder,
     GuildMember,
     ModalActionRowComponentBuilder,
@@ -60,8 +61,18 @@ export class Methods {
     static async selectMenuInteractionHandler (intera: AnySelectMenuInteraction) {
         if(intera.customId == "r4-select"){
             let r4CheckoutChannel = await bot.channels.fetch(Constants.channelsId.R4_CHECKOUT) as TextChannel;
-            r4CheckoutChannel.send(pingInvitingR4(intera.user.username, intera.values[0]))
-            intera.reply({content: "Les r4 ont été prévenu, ils vont bientôt vous donner l'accès au reste du serveur", ephemeral: true})
+            r4CheckoutChannel.send(pingInvitingR4(intera.user.username, intera.values[0]));
+
+            intera.reply({content: Constants.text.newMember.askNickname, components: [Utils.generateYesNoButtons("askNickname")], ephemeral: true});
+            
+            let nick = await intera.channel?.awaitMessageComponent({ filter: (inter) => inter.user.id == intera.user.id && inter.customId.startsWith("askNickname"), time: 60000, componentType: ComponentType.Button})
+            if(!nick)
+                return intera.editReply({content: Constants.text.newMember.cancelNickname, components: []});
+            else if (nick.customId.endsWith("no")){
+                let nicknameModal = this.constructIncomeModal(intera.member as GuildMember);
+                nick.showModal(nicknameModal);
+            }
+            return intera.editReply({content: Constants.text.newMember.endNickname, components: []});
         }
     }
 }
