@@ -1,4 +1,4 @@
-import { Client, Guild, TextBasedChannel, User } from "discord.js";
+import { Client, Guild, InteractionType, TextBasedChannel, User } from "discord.js";
 import { Config } from "../data/config.js";
 import { Constants } from "./core/models/constants.js";
 import { Methods } from "./core/models/methods.js";
@@ -41,6 +41,9 @@ bot.on('interactionCreate', async intera => {
             
             case InteractionType.MessageComponent:
                 if(intera.isAnySelectMenu()) await Methods.selectMenuInteractionHandler(intera);
+                break;
+            }
+        
     }
     catch (error) {
         await sendErrorLog(error);
