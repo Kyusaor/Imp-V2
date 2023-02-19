@@ -1,15 +1,20 @@
 import { 
     ActionRowBuilder,
     AnySelectMenuInteraction,
+    ButtonBuilder,
+    ButtonStyle,
     CommandInteraction,
+    EmbedBuilder,
     GuildMember,
     ModalActionRowComponentBuilder,
     ModalBuilder,
     TextChannel,
     TextInputBuilder,
-    TextInputStyle 
+    TextInputStyle, 
+    User
 } from "discord.js";
 import { bot } from "../../main.js";
+import { Utils } from "../utils.js";
 import { Constants } from "./constants.js";
 
 export class Methods {
@@ -63,4 +68,40 @@ export class Methods {
 
 function pingInvitingR4(member:string, r4:string) {
     return `<@${r4}>, il y a ${member} à la porte du serveur`
+}
+
+function newMemberEmbedRoleBuilder(user:User) {
+    let embed = new EmbedBuilder()
+        .setTitle("Un nouveau membre est arrivé")
+        .setThumbnail(`${user.displayAvatarURL()}`)
+        .addFields([
+            {name: "Pseudo", value: `${user.tag}`},
+            {name: "ID", value: `${user.id}`},
+            {name: "Date de création du compte", value: `${Utils.displayDate(user.createdAt, "user")}`}
+        ])
+
+    let buttons = new ActionRowBuilder<ButtonBuilder>()
+        .addComponents([
+            new ButtonBuilder()
+                .setCustomId('r4check-imp')
+                .setLabel('Imp')
+                .setStyle(ButtonStyle.Primary),
+
+            new ButtonBuilder()
+                .setCustomId('r4check-zak')
+                .setLabel('zak')
+                .setStyle(ButtonStyle.Primary),
+
+            new ButtonBuilder()
+                .setCustomId('r4check-guest')
+                .setLabel('Invité')
+                .setStyle(ButtonStyle.Secondary),
+
+            new ButtonBuilder()
+                .setCustomId('r4check-kick')
+                .setLabel('kick')
+                .setStyle(ButtonStyle.Danger)
+        ])
+
+    return {embeds: [embed], components: [buttons]}
 }
