@@ -1,3 +1,6 @@
+import { ActionRowBuilder, ButtonBuilder } from "@discordjs/builders";
+import { ButtonStyle } from "discord.js";
+
 export class Utils {
 
     static displayDate (date:Date, format:"console" | "user") {
@@ -15,6 +18,24 @@ export class Utils {
         else 
             return day + "/" + month + "/" + year + " à " + hour + ":" + minutes + " (il y a " + daysSince + " jours)"
         
+    }
+
+    static generateYesNoButtons(label:string) {
+
+        let buttons = new ActionRowBuilder<ButtonBuilder>()
+            .addComponents([
+                new ButtonBuilder()
+                    .setCustomId(`${label}-yes`)
+                    .setStyle(ButtonStyle.Success)
+                    .setLabel("Oui"),
+
+                new ButtonBuilder()
+                    .setCustomId(`${label}-no`)
+                    .setStyle(ButtonStyle.Danger)
+                    .setLabel("Non")
+            ])
+        
+        return buttons
     }
 }
 
