@@ -6,7 +6,7 @@ export abstract class Constants {
 
     static readonly channelsId = {
         VALIDATION_CHANNEL: "1073252249926631425",
-        R4_CHECKOUT: "802883413806940172",
+        R4_CHECKOUT: "1076898278219722812",
         ERRORS_LOGS: "1076152712384745492"
     }
 
@@ -17,6 +17,11 @@ export abstract class Constants {
     static readonly text = {
         console: {
             READY: " connecté"
+        },
+        newMember: {
+            askNickname: "Les r4 ont été prévenu, ils vont bientôt vous donner l'accès au reste du serveur\n\nEn attendant, dites-moi: avez-vous le même pseudo sur Discord et sur Lords mobile?",
+            cancelNickname: "Les r4 ont été prévenu, ils vont bientôt vous donner l'accès au reste du serveur",
+            endNickname: "Ça marche ! Vous aurez bientôt accès au serveur"
         }
     }
 }
