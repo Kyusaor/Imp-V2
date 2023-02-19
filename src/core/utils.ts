@@ -1,14 +1,30 @@
-export abstract class Utils {
+export class Utils {
 
-    static displayConsoleHour () {
-        let date = new Date();
+    static displayDate (date:Date, format:"console" | "user") {
 
-        let day = date.getDate().toString().padStart(2, '0');
-        let month = (date.getMonth() + 1).toString().padStart(2, '0');
-        let hour = date.getHours().toString().padStart(2, '0');
-        let minutes = date.getMinutes().toString().padStart(2, '0');
-        let seconds = date.getSeconds().toString().padStart(2, '0');
+        let day = formatTo2Digits(date.getDate());
+        let month = formatTo2Digits(date.getMonth() + 1);
+        let year = date.getFullYear();
+        let hour = formatTo2Digits(date.getHours());
+        let minutes = formatTo2Digits(date.getMinutes());
+        let seconds = formatTo2Digits(date.getSeconds());
+        let daysSince = displayDaysSince(date.getTime());
 
-        return `[${day}/${month}] [${hour}:${minutes}:${seconds}]`
+        if(format == "console")
+            return `[${day}/${month}] [${hour}:${minutes}:${seconds}]`;
+        else 
+            return day + "/" + month + "/" + year + " à " + hour + ":" + minutes + " (il y a " + daysSince + " jours)"
+        
     }
+}
+
+
+function displayDaysSince(date:number) {
+    let mtn = Date.now();
+    let ecart = Math.floor((mtn - date) / 86400000);
+    return ecart.toString()
+}
+
+function formatTo2Digits(value:number) {
+    return value.toString().padStart(2, '0')
 }
