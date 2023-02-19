@@ -35,7 +35,7 @@ export class Methods {
         let memberId = member.user.id;
 
         let modal = new ModalBuilder()
-            .setTitle(`Bienvenue chez **Imp** ${member.user.username} !`)
+            .setTitle(`Bienvenue chez Imp ${member.user.username} !`)
             .setCustomId(`${memberId}-incomeModal`)
             .addComponents([
                 new ActionRowBuilder<ModalActionRowComponentBuilder>().addComponents(
