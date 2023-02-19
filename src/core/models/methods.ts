@@ -46,7 +46,6 @@ export class Methods {
                         .setStyle(TextInputStyle.Short)
                         .setMaxLength(32)
                         .setMinLength(2)
-                        .setRequired(true)
                     )
             ])
 
@@ -54,6 +53,14 @@ export class Methods {
     }
     
     static async newMemberHandler(member: GuildMember) {
+    static async modalSubmitManager(modal: ModalSubmitInteraction) {
+        modal.reply({content: Constants.text.newMember.endNickname, ephemeral: true});
+        let nick = modal.fields.getTextInputValue(`${modal.user.id}-incomeModal-nick`);
+        if(!nick) return;
+        let member = await modal.guild?.members.fetch(modal.user.id) as GuildMember;
+        return member.setNickname(nick);
+    }
+    
         let r4CheckoutChannel = await bot.channels.fetch(Constants.channelsId.R4_CHECKOUT) as TextChannel;
         let newMemberEmbedRole = newMemberEmbedRoleBuilder(member.user);
         r4CheckoutChannel.send(newMemberEmbedRole);
