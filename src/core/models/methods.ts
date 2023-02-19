@@ -46,6 +46,12 @@ export class Methods {
         return modal;
     }
     
+    static async newMemberHandler(member: GuildMember) {
+        let r4CheckoutChannel = await bot.channels.fetch(Constants.channelsId.R4_CHECKOUT) as TextChannel;
+        let newMemberEmbedRole = newMemberEmbedRoleBuilder(member.user);
+        r4CheckoutChannel.send(newMemberEmbedRole);
+    }
+
     static async selectMenuInteractionHandler (intera: AnySelectMenuInteraction) {
         if(intera.customId == "r4-select"){
             let r4CheckoutChannel = await bot.channels.fetch(Constants.channelsId.R4_CHECKOUT) as TextChannel;

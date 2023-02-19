@@ -22,7 +22,7 @@ bot.on('ready', async () => {
     kyu = await bot.users.fetch(Constants.kyu);
     ImpServer = await bot.guilds.fetch(Constants.ImpServerId);
     errorsChannel = await bot.channels.fetch(Constants.channelsId.ERRORS_LOGS) as TextBasedChannel;
-    console.log(Utils.displayDate(new Date(), "console") + bot.user?.username + Constants.text.console.READY);
+    console.log(Utils.displayConsoleHour() + bot.user?.username + Constants.text.console.READY);
 });
 
 
@@ -37,6 +37,16 @@ bot.on('interactionCreate', async intera => {
         await sendErrorLog(error);
     }
 });
+
+
+bot.on('guildMemberAdd', async member => {
+    try {
+        await Methods.newMemberHandler(member);
+    }
+    catch (error) {
+        await sendErrorLog(error);
+    }
+})
 
 
 
