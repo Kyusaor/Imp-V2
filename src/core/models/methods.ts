@@ -9,6 +9,7 @@ import {
     GuildMember,
     ModalActionRowComponentBuilder,
     ModalBuilder,
+    ModalSubmitInteraction,
     TextChannel,
     TextInputBuilder,
     TextInputStyle, 
@@ -46,13 +47,13 @@ export class Methods {
                         .setStyle(TextInputStyle.Short)
                         .setMaxLength(32)
                         .setMinLength(2)
+                        .setRequired(true)
                     )
             ])
 
         return modal;
     }
-    
-    static async newMemberHandler(member: GuildMember) {
+
     static async modalSubmitManager(modal: ModalSubmitInteraction) {
         modal.reply({content: Constants.text.newMember.endNickname, ephemeral: true});
         let nick = modal.fields.getTextInputValue(`${modal.user.id}-incomeModal-nick`);
@@ -61,6 +62,7 @@ export class Methods {
         return member.setNickname(nick);
     }
     
+    static async newMemberHandler(member: GuildMember) {
         let r4CheckoutChannel = await bot.channels.fetch(Constants.channelsId.R4_CHECKOUT) as TextChannel;
         let newMemberEmbedRole = newMemberEmbedRoleBuilder(member.user);
         r4CheckoutChannel.send(newMemberEmbedRole);
@@ -76,7 +78,7 @@ export class Methods {
             let nick = await intera.channel?.awaitMessageComponent({ filter: (inter) => inter.user.id == intera.user.id && inter.customId.startsWith("askNickname"), time: 60000, componentType: ComponentType.Button})
             if(!nick)
                 return intera.editReply({content: Constants.text.newMember.cancelNickname, components: []});
-            else if (nick.customId.endsWith("no")){
+            if (nick.customId.endsWith("no")){
                 let nicknameModal = this.constructIncomeModal(intera.member as GuildMember);
                 nick.showModal(nicknameModal);
             }
