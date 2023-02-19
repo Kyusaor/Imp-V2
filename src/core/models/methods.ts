@@ -61,6 +61,7 @@ export class Methods {
         if(intera.customId == "r4-select"){
             let r4CheckoutChannel = await bot.channels.fetch(Constants.channelsId.R4_CHECKOUT) as TextChannel;
             r4CheckoutChannel.send(pingInvitingR4(intera.user.username, intera.values[0]))
+            intera.reply({content: "Les r4 ont été prévenu, ils vont bientôt vous donner l'accès au reste du serveur", ephemeral: true})
         }
     }
 }
