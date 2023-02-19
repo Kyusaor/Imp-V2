@@ -46,11 +46,15 @@ export class Methods {
         return modal;
     }
     
-    static async newMemberManager (intera: AnySelectMenuInteraction) {
-    }
-
     static async selectMenuInteractionHandler (intera: AnySelectMenuInteraction) {
-        if(intera.customId == "r4-select")
-            await this.newMemberManager(intera);
+        if(intera.customId == "r4-select"){
+            let r4CheckoutChannel = await bot.channels.fetch(Constants.channelsId.R4_CHECKOUT) as TextChannel;
+            r4CheckoutChannel.send(pingInvitingR4(intera.user.username, intera.values[0]))
+        }
     }
+}
+
+
+function pingInvitingR4(member:string, r4:string) {
+    return `<@${r4}>, il y a ${member} à la porte du serveur`
 }
