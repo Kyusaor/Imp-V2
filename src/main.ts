@@ -30,8 +30,17 @@ bot.on('ready', async () => {
 //Script execution
 bot.on('interactionCreate', async intera => {
     try {
-        if(intera.isChatInputCommand()) await Methods.commandInteractionHandler(intera);
-        if(intera.isAnySelectMenu()) await Methods.selectMenuInteractionHandler(intera);
+        switch(intera.type) {
+            case InteractionType.ApplicationCommand:
+                await Methods.commandInteractionHandler(intera);
+                break;
+
+            case InteractionType.ModalSubmit:
+                await Methods.modalSubmitManager(intera);
+                break;
+            
+            case InteractionType.MessageComponent:
+                if(intera.isAnySelectMenu()) await Methods.selectMenuInteractionHandler(intera);
     }
     catch (error) {
         await sendErrorLog(error);
