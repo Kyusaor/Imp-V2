@@ -41,6 +41,7 @@ export abstract class Constants {
         },
         errors: {
             errorCommand: "Un problème s'est produit dans l'exécution de la commande",
+            errorFetchMember: "Le membre est introuvable",
         }
     }
 }
