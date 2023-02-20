@@ -21,7 +21,10 @@ export abstract class Constants {
         newMember: {
             askNickname: "Les r4 ont été prévenu, ils vont bientôt vous donner l'accès au reste du serveur\n\nEn attendant, dites-moi: avez-vous le même pseudo sur Discord et sur Lords mobile?",
             cancelNickname: "Les r4 ont été prévenu, ils vont bientôt vous donner l'accès au reste du serveur",
-            endNickname: "Ça marche ! Vous aurez bientôt accès au serveur"
+            endNickname: "Ça marche ! Vous aurez bientôt accès au serveur",
+        },
+        errors: {
+            errorCommand: "Un problème s'est produit dans l'exécution de la commande",
         }
     }
 }
