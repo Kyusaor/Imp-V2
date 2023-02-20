@@ -45,6 +45,13 @@ export abstract class Constants {
             errorFetchMember: "Le membre est introuvable",
             memberAlreadyTreated: "Le membre a déjà eu l'attribution des rôles",
             memberEmbedFieldsUnavailable: "Les champs sont introuvables",
+        },
+        commands: {
+            autoroleSuccess: "Le panneau d'autorole a bien été défini",
         }
+    }
+
+    static readonly images = {
+        autoroleThumbnail: "https://media.discordapp.net/attachments/448805104615686145/776568612315463710/PicsArt_11-12-11.06.12.png"
     }
 }
