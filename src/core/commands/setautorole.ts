@@ -49,6 +49,11 @@ function createPannelEmbed () {
                 description: "Lorsque un rally est lancé",
                 value: "rally"
             },
+            {
+                label: "Solo war",
+                description: "LEs partages de cibles solo",
+                value: "solo"
+            },
         ])
     let row = new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(menu)
 
