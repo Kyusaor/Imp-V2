@@ -2,6 +2,7 @@ import {
     ActionRowBuilder,
     AnySelectMenuInteraction,
     ButtonBuilder,
+    ButtonInteraction,
     ButtonStyle,
     CommandInteraction,
     ComponentType,
@@ -10,6 +11,7 @@ import {
     ModalActionRowComponentBuilder,
     ModalBuilder,
     ModalSubmitInteraction,
+    RoleResolvable,
     TextChannel,
     TextInputBuilder,
     TextInputStyle, 
@@ -75,6 +77,28 @@ export class Methods {
         r4CheckoutChannel.send(newMemberEmbedRole);
     }
 
+    //Handle role attribution
+    static async newMemberRoleGiver (button: ButtonInteraction) {
+        let type = button.customId.slice(8);
+        let memberId = button.message.embeds[0].fields[1].value;
+        let member:GuildMember;
+        try {
+            member = await button.guild?.members.fetch(memberId) as GuildMember;
+        }
+        catch {
+            return button.reply({ content: Constants.text.errors.errorFetchMember, ephemeral: true});
+        }
+        if(["imp", "zak", "guest"].includes(type)){
+            await addNewMemberRole(member, type).catch(e => button.reply({content: Constants.text.errors.errorCommand, ephemeral: true}));
+            return button.reply(`Les rôles ${button.component.label} ont été attribués à ${member.user.username}`)
+        }
+        else if(type == "kick"){
+            member.kick("Kick r4")
+            await button.channel?.send('🤸‍♂️🏌️')
+            return button.reply(`${member.user.username} a été kick!`)
+        }
+    }
+
     //Select menu handler
     static async selectMenuInteractionHandler (intera: AnySelectMenuInteraction) {
         if(intera.customId == "r4-select"){
@@ -124,7 +148,7 @@ function newMemberEmbedRoleBuilder(user:User) {
 
             new ButtonBuilder()
                 .setCustomId('r4check-guest')
-                .setLabel('Invité')
+                .setLabel('invité')
                 .setStyle(ButtonStyle.Secondary),
 
             new ButtonBuilder()
@@ -134,4 +158,11 @@ function newMemberEmbedRoleBuilder(user:User) {
         ])
 
     return {embeds: [embed], components: [buttons]}
+}
+
+async function addNewMemberRole (member:GuildMember, type:string) {
+    let list = Object.values(Constants.rolesId.newMember[type as keyof object]);
+    for(let roleId of list) {
+        await member.roles.add(roleId as RoleResolvable)
+    }
 }
