@@ -18,7 +18,6 @@ import {
     TextInputStyle, 
     User
 } from "discord.js";
-import { validateLocaleAndSetLanguage } from "typescript";
 import { bot } from "../../main.js";
 import { Utils } from "../utils.js";
 import { Constants } from "./constants.js";
