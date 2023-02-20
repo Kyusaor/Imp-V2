@@ -7,7 +7,8 @@ export abstract class Constants {
     static readonly channelsId = {
         VALIDATION_CHANNEL: "1073252249926631425",
         R4_CHECKOUT: "1076898278219722812",
-        ERRORS_LOGS: "1076152712384745492"
+        ERRORS_LOGS: "1076152712384745492",
+        AUTO_ROLE: "808743465395421204",
     }
 
     static readonly rolesId = {
