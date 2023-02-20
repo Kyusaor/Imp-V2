@@ -42,6 +42,8 @@ export abstract class Constants {
         errors: {
             errorCommand: "Un problème s'est produit dans l'exécution de la commande",
             errorFetchMember: "Le membre est introuvable",
+            memberAlreadyTreated: "Le membre a déjà eu l'attribution des rôles",
+            memberEmbedFieldsUnavailable: "Les champs sont introuvables",
         }
     }
 }

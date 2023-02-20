@@ -8,6 +8,7 @@ import {
     ComponentType,
     EmbedBuilder,
     GuildMember,
+    Message,
     ModalActionRowComponentBuilder,
     ModalBuilder,
     ModalSubmitInteraction,
@@ -17,6 +18,7 @@ import {
     TextInputStyle, 
     User
 } from "discord.js";
+import { validateLocaleAndSetLanguage } from "typescript";
 import { bot } from "../../main.js";
 import { Utils } from "../utils.js";
 import { Constants } from "./constants.js";
@@ -79,8 +81,10 @@ export class Methods {
 
     //Handle role attribution
     static async newMemberRoleGiver (button: ButtonInteraction) {
+        if(memberAlreadyTreated(button)) 
+            return button.reply({ content: `${Constants.text.errors.memberAlreadyTreated} ${button.message.embeds[0].fields[3].value}`, ephemeral: true});
         let type = button.customId.slice(8);
-        let memberId = button.message.embeds[0].fields[1].value;
+        let memberId = getMemberIdFromR4Embed(button);
         let member:GuildMember;
         try {
             member = await button.guild?.members.fetch(memberId) as GuildMember;
@@ -90,13 +94,14 @@ export class Methods {
         }
         if(["imp", "zak", "guest"].includes(type)){
             await addNewMemberRole(member, type).catch(e => button.reply({content: Constants.text.errors.errorCommand, ephemeral: true}));
-            return button.reply(`Les rôles ${button.component.label} ont été attribués à ${member.user.username}`)
+            button.reply(`Les rôles ${button.component.label} ont été attribués à ${member.user.username}`)
         }
         else if(type == "kick"){
             member.kick("Kick r4")
             await button.channel?.send('🤸‍♂️🏌️')
-            return button.reply(`${member.user.username} a été kick!`)
+            button.reply(`${member.user.username} a été kick!`)
         }
+        editNewMemberEmbedAttribution(button.message, button.component.label as string);
     }
 
     //Select menu handler
@@ -120,6 +125,10 @@ export class Methods {
 }
 
 
+function getMemberIdFromR4Embed(button: ButtonInteraction) {
+    return button.message.embeds[0].fields[1].value;
+}
+
 function pingInvitingR4(member:string, r4:string) {
     return `<@${r4}>, il y a ${member} à la porte du serveur`
 }
@@ -131,7 +140,8 @@ function newMemberEmbedRoleBuilder(user:User) {
         .addFields([
             {name: "Pseudo", value: `${user.tag}`},
             {name: "ID", value: `${user.id}`},
-            {name: "Date de création du compte", value: `${Utils.displayDate(user.createdAt, "user")}`}
+            {name: "Date de création du compte", value: `${Utils.displayDate(user.createdAt, "user")}`},
+            {name: "Attribution", value: "Non traitée"}
         ])
 
     let buttons = new ActionRowBuilder<ButtonBuilder>()
@@ -165,4 +175,17 @@ async function addNewMemberRole (member:GuildMember, type:string) {
     for(let roleId of list) {
         await member.roles.add(roleId as RoleResolvable)
     }
+}
+
+function memberAlreadyTreated(button:ButtonInteraction) {
+    let content = button.message.embeds[0].fields[3].value;
+    return content !== "Non traitée"
+}
+
+function editNewMemberEmbedAttribution (msg:Message, type:string) {
+    let data = msg.embeds[0].data;
+    if(!data.fields)
+        return console.log(Constants.text.errors.memberEmbedFieldsUnavailable);
+    data.fields[3].value = type;
+    msg.edit({embeds: [new EmbedBuilder(data)]});
 }
