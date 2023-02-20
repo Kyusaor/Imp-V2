@@ -11,7 +11,23 @@ export abstract class Constants {
     }
 
     static readonly rolesId = {
-        R4: "681645771678154752"
+        R4: "681645771678154752",
+        newMember: {
+            imp: [
+                '735839625796517888', //Imp member
+                '801335272998436874', //T4 SN
+                '801336382735515678', //Rally war
+                '801336531737640961', //Def war
+                '801337278789451776', //Solo war
+            ],
+            zak: [
+                '1076901335066230795',//zak member
+                '801336531737640961', //Def war
+            ],
+            guest: [
+                '801339397362024478'
+            ],
+        }
     }
 
     static readonly text = {
