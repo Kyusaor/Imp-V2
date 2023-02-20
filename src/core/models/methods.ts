@@ -21,6 +21,11 @@ import { Constants } from "./constants.js";
 
 export class Methods {
 
+    //Button handler
+    static async buttonHandler (button:ButtonInteraction) {
+        if(button.customId.startsWith('r4check')) await this.newMemberRoleGiver(button);
+    }
+
     //Command handler
     static async commandInteractionHandler(intera: CommandInteraction) {
 

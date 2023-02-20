@@ -41,6 +41,7 @@ bot.on('interactionCreate', async intera => {
             
             case InteractionType.MessageComponent:
                 if(intera.isAnySelectMenu()) await Methods.selectMenuInteractionHandler(intera);
+                if(intera.isButton()) await Methods.buttonHandler(intera);
                 break;
             }
         
