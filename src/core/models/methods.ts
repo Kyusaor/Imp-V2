@@ -12,6 +12,7 @@ import {
     ModalActionRowComponentBuilder,
     ModalBuilder,
     ModalSubmitInteraction,
+    Role,
     RoleResolvable,
     TextChannel,
     TextInputBuilder,
@@ -105,20 +106,48 @@ export class Methods {
 
     //Select menu handler
     static async selectMenuInteractionHandler (intera: AnySelectMenuInteraction) {
-        if(intera.customId == "r4-select"){
-            let r4CheckoutChannel = await bot.channels.fetch(Constants.channelsId.R4_CHECKOUT) as TextChannel;
-            r4CheckoutChannel.send(pingInvitingR4(intera.user.username, intera.values[0]));
+        switch (intera.customId){
+            case "r4-select":
+                let r4CheckoutChannel = await bot.channels.fetch(Constants.channelsId.R4_CHECKOUT) as TextChannel;
+                r4CheckoutChannel.send(pingInvitingR4(intera.user.username, intera.values[0]));
+    
+                intera.reply({content: Constants.text.newMember.askNickname, components: [Utils.generateYesNoButtons("askNickname")], ephemeral: true});
+                
+                let nick = await intera.channel?.awaitMessageComponent({ filter: (inter) => inter.user.id == intera.user.id && inter.customId.startsWith("askNickname"), time: 60000, componentType: ComponentType.Button})
+                if(!nick)
+                    return intera.editReply({content: Constants.text.newMember.cancelNickname, components: []});
+                if (nick.customId.endsWith("no")){
+                    let nicknameModal = this.constructIncomeModal(intera.member as GuildMember);
+                    nick.showModal(nicknameModal);
+                }
+                intera.editReply({content: Constants.text.newMember.endNickname, components: []});
+            break;
 
-            intera.reply({content: Constants.text.newMember.askNickname, components: [Utils.generateYesNoButtons("askNickname")], ephemeral: true});
-            
-            let nick = await intera.channel?.awaitMessageComponent({ filter: (inter) => inter.user.id == intera.user.id && inter.customId.startsWith("askNickname"), time: 60000, componentType: ComponentType.Button})
-            if(!nick)
-                return intera.editReply({content: Constants.text.newMember.cancelNickname, components: []});
-            if (nick.customId.endsWith("no")){
-                let nicknameModal = this.constructIncomeModal(intera.member as GuildMember);
-                nick.showModal(nicknameModal);
-            }
-            return intera.editReply({content: Constants.text.newMember.endNickname, components: []});
+            case 'Autorole-menu':
+                let listEditedRoles:{ add: string[], del: string[]} = {add: [], del:[]};
+                let checked = intera.values;
+                let member = await intera.guild?.members.fetch(intera.user.id) as GuildMember;
+                let oldRolesList = member.roles.cache.map(r => r.id);
+
+                for(let roleName of Object.keys(Constants.rolesId.autorole)) {
+                    let roleId = Constants.rolesId.autorole[roleName as keyof object];
+                    //Role checked but not present
+                    if(checked.includes(roleName) && !oldRolesList.includes(roleId)){
+                        let role = await intera.guild?.roles.fetch(roleId) as Role;
+                        await member.roles.add(role)
+                        listEditedRoles.add.push(role.name)
+                    }
+                    else if (!checked.includes(roleName) && oldRolesList.includes(roleId)) {
+                        let role = await intera.guild?.roles.fetch(roleId) as Role;
+                        await member.roles.remove(role)
+                        listEditedRoles.del.push(role.name)
+                    }
+                }
+                let payload:string = "";
+                if(listEditedRoles.add.length == 0 && listEditedRoles.del.length == 0) payload = Constants.text.commands.autoroleNoProvidedRoles;
+                else payload = buildAutoleMessagePayload();
+                intera.reply({content: payload, ephemeral: true});
+            break;
         }
     }
 }
@@ -188,3 +217,5 @@ function editNewMemberEmbedAttribution (msg:Message, type:string) {
     data.fields[3].value = type;
     msg.edit({embeds: [new EmbedBuilder(data)]});
 }
+
+function buildAutoleMessagePayload() {}

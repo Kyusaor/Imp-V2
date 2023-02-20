@@ -8,7 +8,7 @@ export abstract class Constants {
         VALIDATION_CHANNEL: "1073252249926631425",
         R4_CHECKOUT: "1076898278219722812",
         ERRORS_LOGS: "1076152712384745492",
-        AUTO_ROLE: "808743465395421204",
+        AUTO_ROLE: "1076898278219722812",  //"808743465395421204"
     }
 
     static readonly rolesId = {
@@ -54,6 +54,7 @@ export abstract class Constants {
         },
         commands: {
             autoroleSuccess: "Le panneau d'autorole a bien été défini",
+            autoroleNoProvidedRoles: "Aucun nouveau rôle n'a été donné, vos rôles sont donc restés tels quels"
         }
     }
 
