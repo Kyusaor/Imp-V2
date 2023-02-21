@@ -32,7 +32,7 @@ function createPannelEmbed () {
         .setCustomId('Autorole-menu')
         .setPlaceholder('Cliquez ici pour choisir vos rôles')
         .setMinValues(0)
-        .setMaxValues(3)
+        .setMaxValues(4)
         .addOptions([
             {
                 label: "T4 Sombres nids",
