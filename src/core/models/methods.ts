@@ -137,6 +137,7 @@ export class Methods {
                         await member.roles.add(role)
                         listEditedRoles.add.push(role.name)
                     }
+                    //Role not checked but already present
                     else if (!checked.includes(roleName) && oldRolesList.includes(roleId)) {
                         let role = await intera.guild?.roles.fetch(roleId) as Role;
                         await member.roles.remove(role)
@@ -145,7 +146,7 @@ export class Methods {
                 }
                 let payload:string = "";
                 if(listEditedRoles.add.length == 0 && listEditedRoles.del.length == 0) payload = Constants.text.commands.autoroleNoProvidedRoles;
-                else payload = buildAutoleMessagePayload();
+                else payload = buildAutoleMessagePayload(listEditedRoles);
                 intera.reply({content: payload, ephemeral: true});
             break;
         }
@@ -218,4 +219,12 @@ function editNewMemberEmbedAttribution (msg:Message, type:string) {
     msg.edit({embeds: [new EmbedBuilder(data)]});
 }
 
-function buildAutoleMessagePayload() {}
+function buildAutoleMessagePayload(list:{add: string[]; del:string[]}) {
+    let returnedString = "Vos rôles ont été mis à jour:\n\n";
+    list.add.forEach(e => returnedString += `-ajout: ${e}\n`);
+    if(list.add.length !== 0)
+        returnedString += "\n";
+    list.del.forEach(e => returnedString += `-retrait: ${e}\n`)
+    
+    return returnedString;
+}
