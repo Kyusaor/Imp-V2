@@ -25,7 +25,7 @@ if(todo) {
 		console.log(`Recharge ${commands.length} /commandes`);
 
 		const data = await rest.put(
-			Routes.applicationCommands(Constants.botId),
+			Routes.applicationGuildCommands(Constants.botId, Constants.ImpServerId),
 			{ body: commands },
 		) as RestOrArray<SlashCommandBuilder>;
 
@@ -40,11 +40,11 @@ if(todo) {
 //Delete
 else {
     try {
-        rest.get(Routes.applicationCommands(Constants.botId))
+        rest.get(Routes.applicationGuildCommands(Constants.botId, Constants.ImpServerId))
         .then(data => {
             const promises:Promise<unknown>[] = [];
             for (const command of data as any) {
-                const deleteUrl = `/${Routes.applicationCommands(Constants.botId)}/${command.id}`;
+                const deleteUrl = `/${Routes.applicationGuildCommands(Constants.botId, Constants.ImpServerId)}/${command.id}`;
                 promises.push(rest.delete(deleteUrl as `/${string}`));
             }
                 return Promise.all(promises);
