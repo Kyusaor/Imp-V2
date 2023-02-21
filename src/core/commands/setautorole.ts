@@ -6,6 +6,7 @@ export const CommandBuilder = new SlashCommandBuilder()
     .setName("setautorole")
     .setDescription("Redéfinis le panneau d'auto-rôle")
     .setDefaultMemberPermissions(0)
+    .setDMPermission(false)
 
 export async function run(intera:CommandInteraction) {
     await deleteOldPannel(intera);

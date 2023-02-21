@@ -6,6 +6,7 @@ export const CommandBuilder = new SlashCommandBuilder()
     .setName(`setwelcomemenu`)
     .setDescription(`Redéfinit le panneau d'accueil`)
     .setDefaultMemberPermissions(0)
+    .setDMPermission(false)
 
 export async function run (intera: CommandInteraction) {
 
