@@ -41,13 +41,14 @@ if(todo) {
 else {
     try {
         rest.get(Routes.applicationGuildCommands(Constants.botId, Constants.ImpServerId))
-        .then(data => {
+        .then(async data => {
             const promises:Promise<unknown>[] = [];
             for (const command of data as any) {
                 const deleteUrl = `/${Routes.applicationGuildCommands(Constants.botId, Constants.ImpServerId)}/${command.id}`;
                 promises.push(rest.delete(deleteUrl as `/${string}`));
             }
-                return Promise.all(promises);
+                await Promise.all(promises);
+                return console.log(`${promises.length} commandes supprimées avec succès`);
             }
         );
     }
