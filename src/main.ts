@@ -53,6 +53,7 @@ bot.on('interactionCreate', async intera => {
 
 
 bot.on('guildMemberAdd', async member => {
+    if(member.guild.id !== Constants.ImpServerId) return;
     try {
         await Methods.newMemberHandler(member);
     }
