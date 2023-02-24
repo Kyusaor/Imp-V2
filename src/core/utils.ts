@@ -37,6 +37,36 @@ export class Utils {
         
         return buttons
     }
+
+    static getMentionnedIdsFromString(str:string | null, scope:"user" | "channel" | "role") {
+        let reg:RegExp;
+        let prefixLength:number;
+        switch(scope) {
+            case 'user':
+                reg = /<@[0-9]{15,20}>/g;
+                prefixLength = 2;
+                break;
+
+            case 'channel':
+                reg = /<#[0-9]{15,20}>/g;
+                prefixLength = 2;
+                break;
+
+            case 'role':
+                reg = /<@&[0-9]{16,21}>/g;
+                prefixLength = 3;
+                break;
+        }
+
+        let matchArray = str?.match(reg);
+        if(matchArray == null) return [];
+
+        let finalArray:string[] = [];
+        for(let element of matchArray) {
+            finalArray.push(element.slice(prefixLength, -1))
+        }
+        return finalArray;
+    }
 }
 
 
