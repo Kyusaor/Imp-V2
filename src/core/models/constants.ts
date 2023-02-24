@@ -46,6 +46,9 @@ export abstract class Constants {
             cancelNickname: "Les r4 ont été prévenu, ils vont bientôt vous donner l'accès au reste du serveur",
             endNickname: "Ça marche ! Vous aurez bientôt accès au serveur",
         },
+        contacts: {
+            askToReplace: "Voulez-vous remplacer la fiche contact de ",
+        },
         errors: {
             errorCommand: "Un problème s'est produit dans l'exécution de la commande",
             errorFetchMember: "Le membre est introuvable",

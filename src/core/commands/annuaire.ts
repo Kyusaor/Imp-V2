@@ -1,5 +1,7 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
-import { readFileSync } from "fs";
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
+import { readFileSync, writeFileSync } from "fs";
+import { Constants } from "../models/constants.js";
+import { Utils } from "../utils.js";
 
 export const CommandBuilder = new SlashCommandBuilder()
     .setName('annuaire')
@@ -30,7 +32,7 @@ export const CommandBuilder = new SlashCommandBuilder()
     )
 
 export async function run(intera:ChatInputCommandInteraction) {
-    let contact = JSON.parse(readFileSync('./data/contacts.json', 'utf-8'));
+    let contact: contactSheet[] = JSON.parse(readFileSync('./data/contacts.json', 'utf-8'));
     switch (intera.options.getSubcommand()) {
         case 'create':
             await createContactElement(intera, contact);
@@ -46,23 +48,56 @@ export async function run(intera:ChatInputCommandInteraction) {
     }
 }
 
-async function createContactElement(intera:ChatInputCommandInteraction, contact:any) {
-    let pseudo = intera.options.getString('pseudo');
-    let discord = intera.options.getUser('discord');
+async function createContactElement(intera:ChatInputCommandInteraction, contact:contactSheet[]) {
+    let pseudo = intera.options.getString('pseudo') as string;
+    let discord = intera.options.getUser('discord')?.id as string;
     let renfo = intera.options.getString('renfo');
     let mates = intera.options.getString('contact');
-    console.log(mates)
 
-    contact[pseudo as keyof typeof contact] = {
-        discord: discord,
-        renfo: renfo,
+    let element = new contactSheet (pseudo, discord, renfo, Utils.getMentionnedIdsFromString(mates, "user"))
+    if(element.isAlreadyPresent())
+
+    writeFileSync('./data/contacts.json', JSON.stringify(contact));
+
+
+}
+
+export class contactSheet {
+
+    constructor (
+        public pseudo: string,
+        public user:string,
+        public renfo:string | null,
+        public mates: string[] | null,
+        ) { }
+
+    isAlreadyPresent() {
+        let db:contactSheet[] = JSON.parse(readFileSync('./data/contacts.json', 'utf-8'));
+        return db.some(element => element.pseudo == this.pseudo);
     }
 }
 
-async function deleteContactElement(intera:ChatInputCommandInteraction, contact:any) {
+async function askToReplace(element:contactSheet, intera:ChatInputCommandInteraction) {
+    let buttons = new ActionRowBuilder<ButtonBuilder>()
+        .addComponents(
+            new ButtonBuilder()
+                .setCustomId('replace-contact-yes')
+                .setLabel('Oui')
+                .setStyle(ButtonStyle.Success),
+
+            new ButtonBuilder()
+                .setCustomId('replace-contact-no')
+                .setLabel('Non')
+                .setStyle(ButtonStyle.Danger)
+        )
+
+    intera.reply({ content: `${Constants.text.contacts.askToReplace}${element.pseudo}?`, components: [buttons] })
+}
+
+async function deleteContactElement(intera:ChatInputCommandInteraction, contact:contactSheet[]) {
     
 }
 
-async function listContact(intera:ChatInputCommandInteraction, contact:any) {
+async function listContact(intera:ChatInputCommandInteraction, contact:contactSheet[]) {
     
 }
