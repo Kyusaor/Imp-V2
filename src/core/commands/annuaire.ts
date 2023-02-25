@@ -1,4 +1,4 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction, ComponentType, EmbedBuilder, embedLength, SlashCommandBuilder } from "discord.js";
 import { readFileSync, writeFileSync } from "fs";
 import { Constants } from "../models/constants.js";
 import { Utils } from "../utils.js";
@@ -19,6 +19,25 @@ export const CommandBuilder = new SlashCommandBuilder()
         .addUserOption(opt => opt
             .setName(`discord`)
             .setDescription(`Le compte discord du membre`)
+            .setRequired(true)
+        )
+        .addStringOption(opt => opt
+            .setName('pays')
+            .setDescription(`Le pays d'origine du membre`)
+            .setRequired(true)
+            .addChoices(
+                {name: `France`, value: `+33`},
+                {name: `Belgique`, value: `+32`},
+                {name: `Algérie`, value: `+213`},
+                {name: `Maroc`, value: `+212`},
+                {name: `Canada`, value: `+1`},
+                {name: `Suisse`, value: `+41`},
+                {name: `Sénégal`, value: `+221`},
+            )
+        )
+        .addStringOption(opt => opt
+            .setName('numero')
+            .setDescription(`Le téléphone du membre (commencer par 0)`)
             .setRequired(true)
         )
         .addStringOption(opt => opt
@@ -48,33 +67,86 @@ export async function run(intera:ChatInputCommandInteraction) {
     }
 }
 
-async function createContactElement(intera:ChatInputCommandInteraction, contact:contactSheet[]) {
-    let pseudo = intera.options.getString('pseudo') as string;
-    let discord = intera.options.getUser('discord')?.id as string;
-    let renfo = intera.options.getString('renfo');
-    let mates = intera.options.getString('contact');
-
-    let element = new contactSheet (pseudo, discord, renfo, Utils.getMentionnedIdsFromString(mates, "user"))
-    if(element.isAlreadyPresent())
-
-    writeFileSync('./data/contacts.json', JSON.stringify(contact));
-
-
-}
-
 export class contactSheet {
 
     constructor (
         public pseudo: string,
         public user:string,
+        public phone:string,
+        public origin:string,
         public renfo:string | null,
         public mates: string[] | null,
-        ) { }
+        ) { 
+            if(!renfo) this.renfo = 'Non défini';
+        }
 
     isAlreadyPresent() {
         let db:contactSheet[] = JSON.parse(readFileSync('./data/contacts.json', 'utf-8'));
         return db.some(element => element.pseudo == this.pseudo);
     }
+
+    displayMates() {
+        let output:string = "";
+        this.mates?.forEach(e => output += `<@${e}>, `)
+        return output.slice(0, -2);
+    }
+
+    displayPhoneNumber() {
+        return `${this.origin}${this.phone.slice(1)}`
+    }
+
+}
+
+
+async function createContactElement(intera:ChatInputCommandInteraction, contact:contactSheet[]) {
+    let pseudo = intera.options.getString('pseudo') as string;
+    let discord = intera.options.getUser('discord')?.id as string;
+    let origin = intera.options.getString('pays') as string;
+    let phoneNum = intera.options.getString('numero') as string;
+    let renfo = intera.options.getString('renfo');
+    let mates = intera.options.getString('contact');
+
+
+    let element = new contactSheet (pseudo, discord, origin, phoneNum, renfo, Utils.getMentionnedIdsFromString(mates, "user"));
+
+    if(element.isAlreadyPresent()) {
+        let validation:boolean;
+        validation = await askToReplace(element, intera);
+        if(!validation)
+            return Utils.interaReply({ content: Constants.text.commands.cancelledCommand, components: [] }, intera);
+    }
+    contact.push(element);
+    let confirmEmbed = createContactEmbed(element);
+    Utils.interaReply({embeds: [confirmEmbed], components: []}, intera);
+
+    writeFileSync('./data/contacts.json', JSON.stringify(contact));
+}
+
+function createContactEmbed(element:contactSheet) {
+    return new EmbedBuilder()
+        .setTitle(`Contact ajouté à l'annuaire!`)
+        .addFields(
+            {
+                name: `Pseudo en jeu`,
+                value: `${element.pseudo}`
+            },
+            {
+                name: `Compte discord`,
+                value: `<@${element.user}>`
+            },
+            {
+                name: `Numéro de téléphone`,
+                value: `${element.displayPhoneNumber()}`
+            },
+            {
+                name: `Renfo`,
+                value: `${element.renfo}`
+            },
+            {
+                name: `Membres à contacter`,
+                value: `${element.displayMates()}`
+            },
+        )
 }
 
 async function askToReplace(element:contactSheet, intera:ChatInputCommandInteraction) {
@@ -92,6 +164,9 @@ async function askToReplace(element:contactSheet, intera:ChatInputCommandInterac
         )
 
     intera.reply({ content: `${Constants.text.contacts.askToReplace}${element.pseudo}?`, components: [buttons] })
+
+    let response = await intera.channel?.awaitMessageComponent({ componentType: ComponentType.Button, filter: (button) => button.user.id === intera.user.id, time: 30000 })
+    return !(!response || response.customId.endsWith('no'))
 }
 
 async function deleteContactElement(intera:ChatInputCommandInteraction, contact:contactSheet[]) {
