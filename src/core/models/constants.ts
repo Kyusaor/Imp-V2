@@ -57,7 +57,8 @@ export abstract class Constants {
         },
         commands: {
             autoroleSuccess: "Le panneau d'autorole a bien été défini",
-            autoroleNoProvidedRoles: "Aucun nouveau rôle n'a été donné, vos rôles sont donc restés tels quels"
+            autoroleNoProvidedRoles: "Aucun nouveau rôle n'a été donné, vos rôles sont donc restés tels quels",
+            cancelledCommand: "Commande annulée",
         }
     }
 
