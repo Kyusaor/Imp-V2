@@ -1,5 +1,5 @@
 import { ActionRowBuilder, ButtonBuilder } from "@discordjs/builders";
-import { ButtonStyle } from "discord.js";
+import { ButtonStyle, CommandInteraction, InteractionReplyOptions } from "discord.js";
 
 export class Utils {
 
@@ -66,6 +66,17 @@ export class Utils {
             finalArray.push(element.slice(prefixLength, -1))
         }
         return finalArray;
+    }
+
+    static async interaReply(content:InteractionReplyOptions, intera:CommandInteraction) {
+        if(!intera.deferred && !intera.replied) return intera.reply(content);
+        try  {
+            intera.editReply(content);
+        }
+        catch {
+            await intera.deleteReply().catch(e => e)
+            return intera.followUp(content).catch(e => console.log(e))
+        }
     }
 }
 
