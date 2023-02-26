@@ -1,4 +1,14 @@
-import { AutocompleteInteraction, ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
+import { 
+    AutocompleteInteraction,
+    ChatInputCommandInteraction,
+    EmbedBuilder,
+    InteractionReplyOptions,
+    SlashCommandBuilder,
+    User 
+} from "discord.js";
+import { readFileSync } from "fs";
+import { Constants } from "../models/constants.js";
+import { Utils } from "../utils.js";
 import { contactSheet } from "./annuaire.js";
 
 export const CommandBuilder = new SlashCommandBuilder()
