@@ -54,6 +54,7 @@ export abstract class Constants {
             errorFetchMember: "Le membre est introuvable",
             memberAlreadyTreated: "Le membre a déjà eu l'attribution des rôles",
             memberEmbedFieldsUnavailable: "Les champs sont introuvables",
+            unavailableCommand: "Module de commande indisponible",
         },
         commands: {
             autoroleSuccess: "Le panneau d'autorole a bien été défini",
