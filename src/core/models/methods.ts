@@ -1,6 +1,7 @@
 import { 
     ActionRowBuilder,
     AnySelectMenuInteraction,
+    AutocompleteInteraction,
     ButtonBuilder,
     ButtonInteraction,
     ButtonStyle,
@@ -19,11 +20,19 @@ import {
     TextInputStyle, 
     User
 } from "discord.js";
+import { readFileSync } from "fs";
 import { bot } from "../../main.js";
 import { Utils } from "../utils.js";
 import { Constants } from "./constants.js";
 
 export class Methods {
+
+    //Autocomplete handler
+    static async autocompleteHandler(intera:AutocompleteInteraction) {
+        let db = JSON.parse(readFileSync('./data/contacts.json', 'utf-8'));
+        let command = await import(`../commands/${intera.commandName.toLowerCase()}.js`);
+        await command.autocompleteManager(intera, db);
+    }
 
     //Button handler
     static async buttonHandler (button:ButtonInteraction) {
@@ -35,7 +44,7 @@ export class Methods {
 
         let commandFile = await import(`../commands/${intera.commandName.toLowerCase()}.js`);
         if(!commandFile) 
-            return intera.reply("Module de commande indisponible");
+            return intera.reply(Constants.text.errors.unavailableCommand);
         await commandFile.run(intera);
         
     }

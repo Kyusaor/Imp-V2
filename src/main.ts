@@ -43,6 +43,10 @@ bot.on('interactionCreate', async intera => {
                 if(intera.isAnySelectMenu()) await Methods.selectMenuInteractionHandler(intera);
                 if(intera.isButton()) await Methods.buttonHandler(intera);
                 break;
+
+            case InteractionType.ApplicationCommandAutocomplete:
+                await Methods.autocompleteHandler(intera);
+                break;
             }
         
     }

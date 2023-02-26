@@ -68,7 +68,7 @@ export class Utils {
         return finalArray;
     }
 
-    static async interaReply(content:InteractionReplyOptions, intera:CommandInteraction) {
+    static async interaReply(content:InteractionReplyOptions | string, intera:CommandInteraction) {
         if(!intera.deferred && !intera.replied) return intera.reply(content);
         try  {
             intera.editReply(content);
