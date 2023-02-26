@@ -116,15 +116,17 @@ async function createContactElement(intera:ChatInputCommandInteraction, contact:
             return Utils.interaReply({ content: Constants.text.commands.cancelledCommand, components: [] }, intera);
     }
     contact.push(element);
-    let confirmEmbed = createContactEmbed(element);
-    Utils.interaReply({embeds: [confirmEmbed], components: []}, intera);
+    let confirmEmbed = createContactEmbed(element, element.isAlreadyPresent());
+    Utils.interaReply({content: "", embeds: [confirmEmbed], components: []}, intera);
 
     writeFileSync('./data/contacts.json', JSON.stringify(contact));
 }
 
-function createContactEmbed(element:contactSheet) {
+function createContactEmbed(element:contactSheet, present:boolean) {
+    let title:string;
+    present ? title = `Contact modifié !` : title = `Contact ajouté à l'annuaire!`;
     return new EmbedBuilder()
-        .setTitle(`Contact ajouté à l'annuaire!`)
+        .setTitle(title)
         .addFields(
             {
                 name: `Pseudo en jeu`,
