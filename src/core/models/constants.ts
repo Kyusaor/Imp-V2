@@ -48,6 +48,7 @@ export abstract class Constants {
         },
         contacts: {
             askToReplace: "Voulez-vous remplacer la fiche contact de ",
+            memberNotFound: "Ce membre est introuvable",
         },
         errors: {
             errorCommand: "Un problème s'est produit dans l'exécution de la commande",
