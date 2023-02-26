@@ -107,7 +107,7 @@ async function createContactElement(intera:ChatInputCommandInteraction, contact:
     let mates = intera.options.getString('contact');
 
 
-    let element = new contactSheet (pseudo, discord, origin, phoneNum, renfo, Utils.getMentionnedIdsFromString(mates, "user"));
+    let element = new contactSheet (pseudo, discord, phoneNum, origin, renfo, Utils.getMentionnedIdsFromString(mates, "user"));
 
     if(element.isAlreadyPresent()) {
         let validation:boolean;
