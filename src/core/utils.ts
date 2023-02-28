@@ -1,5 +1,6 @@
 import { ActionRowBuilder, ButtonBuilder } from "@discordjs/builders";
 import { ButtonStyle, CommandInteraction, InteractionReplyOptions } from "discord.js";
+import { readFileSync } from "fs";
 
 export class Utils {
 
@@ -80,6 +81,59 @@ export class Utils {
     }
 }
 
+export class contactSheet {
+
+    constructor (
+        public pseudo: string,
+        public user:string,
+        public phone:string,
+        public origin:string,
+        public renfo:string | null,
+        public mates: string[] | null,
+        ) { 
+            if(!renfo) this.renfo = 'Non défini';
+        }
+
+    isAlreadyPresent() {
+        let db:contactSheet[] = JSON.parse(readFileSync('./data/contacts.json', 'utf-8'));
+        return db.some(element => element.pseudo == this.pseudo);
+    }
+
+    displayMates() {
+        let output:string = "";
+        this.mates?.forEach(e => output += `<@${e}>, `)
+        return output.slice(0, -2);
+    }
+
+    displayPhoneNumber() {
+        return `${this.origin}${this.phone.slice(1)}`
+    }
+
+    createEmbedFields() {
+        return [
+            {
+                name: `Pseudo en jeu`,
+                value: `${this.pseudo}`
+            },
+            {
+                name: `Compte discord`,
+                value: `<@${this.user}>`
+            },
+            {
+                name: `Numéro de téléphone`,
+                value: `${this.displayPhoneNumber()}`
+            },
+            {
+                name: `Renfo`,
+                value: `${this.renfo}`
+            },
+            {
+                name: `Membres à contacter`,
+                value: `${this.displayMates()}`
+            },
+        ]
+    }
+}
 
 function displayDaysSince(date:number) {
     let mtn = Date.now();

@@ -1,7 +1,7 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction, ComponentType, EmbedBuilder, embedLength, SlashCommandBuilder } from "discord.js";
 import { readFileSync, writeFileSync } from "fs";
 import { Constants } from "../models/constants.js";
-import { Utils } from "../utils.js";
+import { Utils, contactSheet } from "../utils.js";
 
 export const CommandBuilder = new SlashCommandBuilder()
     .setName('annuaire')
@@ -67,36 +67,6 @@ export async function run(intera:ChatInputCommandInteraction) {
     }
 }
 
-export class contactSheet {
-
-    constructor (
-        public pseudo: string,
-        public user:string,
-        public phone:string,
-        public origin:string,
-        public renfo:string | null,
-        public mates: string[] | null,
-        ) { 
-            if(!renfo) this.renfo = 'Non défini';
-        }
-
-    isAlreadyPresent() {
-        let db:contactSheet[] = JSON.parse(readFileSync('./data/contacts.json', 'utf-8'));
-        return db.some(element => element.pseudo == this.pseudo);
-    }
-
-    displayMates() {
-        let output:string = "";
-        this.mates?.forEach(e => output += `<@${e}>, `)
-        return output.slice(0, -2);
-    }
-
-    displayPhoneNumber() {
-        return `${this.origin}${this.phone.slice(1)}`
-    }
-
-}
-
 
 async function createContactElement(intera:ChatInputCommandInteraction, contact:contactSheet[]) {
     let pseudo = intera.options.getString('pseudo') as string;
@@ -127,28 +97,7 @@ function createContactEmbed(element:contactSheet, present:boolean) {
     present ? title = `Contact modifié !` : title = `Contact ajouté à l'annuaire!`;
     return new EmbedBuilder()
         .setTitle(title)
-        .addFields(
-            {
-                name: `Pseudo en jeu`,
-                value: `${element.pseudo}`
-            },
-            {
-                name: `Compte discord`,
-                value: `<@${element.user}>`
-            },
-            {
-                name: `Numéro de téléphone`,
-                value: `${element.displayPhoneNumber()}`
-            },
-            {
-                name: `Renfo`,
-                value: `${element.renfo}`
-            },
-            {
-                name: `Membres à contacter`,
-                value: `${element.displayMates()}`
-            },
-        )
+        .addFields(element.createEmbedFields())
 }
 
 async function askToReplace(element:contactSheet, intera:ChatInputCommandInteraction) {

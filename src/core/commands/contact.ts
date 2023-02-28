@@ -7,10 +7,8 @@ import {
     User 
 } from "discord.js";
 import { readFileSync } from "fs";
-import { Config } from "../../../data/config.js";
 import { Constants } from "../models/constants.js";
-import { Utils } from "../utils.js";
-import { contactSheet } from "./annuaire.js";
+import { Utils, contactSheet } from "../utils.js";
 
 export const CommandBuilder = new SlashCommandBuilder()
     .setName(`contact`)
@@ -84,33 +82,22 @@ function buildContactEmbed(data:contactSheet[]) {
             break;
 
         case 1:
-            let profile = data[0];
-            embed.addFields(
-                {
-                    name: `Pseudo en jeu`,
-                    value: `${profile.pseudo}`
-                },
-                {
-                    name: `Compte discord`,
-                    value: `<@${profile.user}>`
-                },
-                {
-                    name: `Numéro de téléphone`,
-                    value: `${profile.displayPhoneNumber()}`
-                },
-                {
-                    name: `Renfo`,
-                    value: `${profile.renfo}`
-                },
-                {
-                    name: `Membres à contacter`,
-                    value: `${profile.displayMates()}`
-                },
-            )
+            let profile:contactSheet = data[0];
+            embed.addFields(profile.createEmbedFields())
             payload = { embeds: [embed] }
             break;
         
         default:
+            let embeds:EmbedBuilder[] = [];
+            for(let profile of data) {
+                let providedEmbed = new EmbedBuilder(embed.data);
+                providedEmbed.setFields(profile.createEmbedFields());
+                embeds.push(providedEmbed)
+            }
+            payload = {
+                content: `Voilà les profils de <@${data[0].user}>`,
+                embeds: embeds
+            }
             break;
     }
 
