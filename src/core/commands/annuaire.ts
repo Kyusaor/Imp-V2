@@ -49,6 +49,19 @@ export const CommandBuilder = new SlashCommandBuilder()
             .setDescription(`Les personnes à contacter (à mentionner dans le champs)`)
         )
     )
+    .addSubcommand(sub => sub
+        .setName(`delete`)
+        .setDescription(`Supprime un seul ou tous les comptes d'un membre de l'annuaire`)
+        .addStringOption(opt => opt
+            .setName(`pseudo`)
+            .setDescription(`Le pseudo du compte`)
+            .setAutocomplete(true)
+        )
+        .addUserOption(opt => opt
+            .setName(`discord`)
+            .setDescription(`Le compte discord du membre (supprime tous les comptes liés)`)
+        )
+    )
 
 export async function run(intera:ChatInputCommandInteraction) {
     let contact: contactSheet[] = JSON.parse(readFileSync('./data/contacts.json', 'utf-8'));
