@@ -48,7 +48,7 @@ export async function autocompleteManager(intera:AutocompleteInteraction, db:con
     await intera.respond(choices);
 }
 
-function findContactElement(pseudo:string | null, discord:User | null, db:contactSheet[]) {
+export function findContactElement(pseudo:string | null, discord:User | null, db:contactSheet[]) {
     let output:contactSheet[] | string;
     if(!pseudo && discord) {
         let id = discord.id;
