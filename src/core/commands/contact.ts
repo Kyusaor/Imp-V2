@@ -73,7 +73,6 @@ function buildContactEmbed(data:contactSheet[]) {
     let embed = new EmbedBuilder()
         .setTitle(`Fiche contact`)
         .setThumbnail(`https://discord.com/assets/5f8aee4f266854e41de9778beaf7abca.svg`)
-        .setDescription(`En cas de souci, mentionnez <@${Constants.kyu}>`)
         .setFooter({text: `Pour copier le numéro, faites un appui long dessus`})
 
     switch(data.length) {
@@ -83,13 +82,15 @@ function buildContactEmbed(data:contactSheet[]) {
 
         case 1:
             let profile:contactSheet = data[0];
-            embed.addFields(profile.createEmbedFields())
+            Object.setPrototypeOf(profile, contactSheet.prototype);
+            embed.addFields(profile.createEmbedFields());
             payload = { embeds: [embed] }
             break;
         
         default:
             let embeds:EmbedBuilder[] = [];
             for(let profile of data) {
+                Object.setPrototypeOf(profile, contactSheet.prototype);
                 let providedEmbed = new EmbedBuilder(embed.data);
                 providedEmbed.setFields(profile.createEmbedFields());
                 embeds.push(providedEmbed)
