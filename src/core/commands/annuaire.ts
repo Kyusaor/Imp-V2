@@ -2,6 +2,7 @@ import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteracti
 import { readFileSync, writeFileSync } from "fs";
 import { Constants } from "../models/constants.js";
 import { Utils, contactSheet } from "../utils.js";
+import { findContactElement } from "./contact.js";
 
 export const CommandBuilder = new SlashCommandBuilder()
     .setName('annuaire')
@@ -134,8 +135,27 @@ async function askToReplace(element:contactSheet, intera:ChatInputCommandInterac
 }
 
 async function deleteContactElement(intera:ChatInputCommandInteraction, contact:contactSheet[]) {
-    
+    let pseudo = intera.options.getString('pseudo') as string;
+    let discord = intera.options.getUser('discord')?.id as string;
+    let member = await intera.guild?.members.fetch(discord);
+    if(!member)
+        return Utils.interaReply(Constants.text.contacts.memberNotFound, intera);
+
+    let profiles = findContactElement(pseudo, member.user, contact);
+    if(typeof profiles == 'string') return Utils.interaReply(profiles as string, intera);
+
+    switch(profiles.length) {
+        case 0:
+            return Utils.interaReply(Constants.text.errors.errorFetchMember, intera);
+
+        case 1:
+            break;
+        
+        default:
+            break;
+    }
 }
+
 
 async function listContact(intera:ChatInputCommandInteraction, contact:contactSheet[]) {
     
