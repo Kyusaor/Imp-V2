@@ -40,8 +40,8 @@ export async function run(intera:ChatInputCommandInteraction) {
 
 export async function autocompleteManager(intera:AutocompleteInteraction, db:contactSheet[]) {
     const focusOpt = intera.options.getFocused().toLowerCase();
-    let choices = db.map(e => e.pseudo.toLowerCase())
-        .filter(e => e.includes(focusOpt))
+    let choices = db.map(e => e.pseudo)
+        .filter(e => e.toLowerCase().includes(focusOpt))
         .map(e => ({name: e, value: e}))
 
     if(choices.length > 25) choices = [{name: "Trop d'éléments, continuez d'écrire pour affiner la recherche", value: "error"}]
