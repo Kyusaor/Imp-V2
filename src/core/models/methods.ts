@@ -30,7 +30,6 @@ export class Methods {
     //Autocomplete handler
     static async autocompleteHandler(intera:AutocompleteInteraction) {
         let db = JSON.parse(readFileSync('./data/contacts.json', 'utf-8'));
-        let command = await import(`../utils.js`);
         await Utils.autocompleteManager(intera, db);
     }
 
