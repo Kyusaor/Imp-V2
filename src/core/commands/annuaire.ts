@@ -79,6 +79,8 @@ export async function run(intera:ChatInputCommandInteraction) {
             listContact(intera, contact);
             break;
     }
+    
+    writeFileSync('./data/contacts.json', JSON.stringify(contact))
 }
 
 
