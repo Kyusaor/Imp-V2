@@ -1,9 +1,19 @@
 import { ActionRowBuilder, ButtonBuilder } from "@discordjs/builders";
-import { ButtonStyle, CommandInteraction, InteractionReplyOptions } from "discord.js";
+import { AutocompleteInteraction, ButtonStyle, CommandInteraction, InteractionReplyOptions } from "discord.js";
 import { readFileSync } from "fs";
 
 export class Utils {
 
+    static async autocompleteManager(intera:AutocompleteInteraction, db:contactSheet[]) {
+        const focusOpt = intera.options.getFocused().toLowerCase();
+        let choices = db.map(e => e.pseudo)
+            .filter(e => e.toLowerCase().includes(focusOpt))
+            .map(e => ({name: e, value: e}))
+    
+        if(choices.length > 25) choices = [{name: "Trop d'éléments, continuez d'écrire pour affiner la recherche", value: "error"}]
+        await intera.respond(choices);
+    }
+    
     static displayDate (date:Date, format:"console" | "user") {
 
         let day = formatTo2Digits(date.getDate());

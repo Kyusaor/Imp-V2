@@ -1,5 +1,4 @@
 import { 
-    AutocompleteInteraction,
     ChatInputCommandInteraction,
     EmbedBuilder,
     InteractionReplyOptions,
@@ -36,16 +35,6 @@ export async function run(intera:ChatInputCommandInteraction) {
 
     let payload = buildContactEmbed(profiles);
     Utils.interaReply(payload, intera);
-}
-
-export async function autocompleteManager(intera:AutocompleteInteraction, db:contactSheet[]) {
-    const focusOpt = intera.options.getFocused().toLowerCase();
-    let choices = db.map(e => e.pseudo)
-        .filter(e => e.toLowerCase().includes(focusOpt))
-        .map(e => ({name: e, value: e}))
-
-    if(choices.length > 25) choices = [{name: "Trop d'éléments, continuez d'écrire pour affiner la recherche", value: "error"}]
-    await intera.respond(choices);
 }
 
 export function findContactElement(pseudo:string | null, discord:User | null, db:contactSheet[]) {
