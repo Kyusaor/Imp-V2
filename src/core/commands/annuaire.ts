@@ -104,8 +104,6 @@ async function createContactElement(intera:ChatInputCommandInteraction, contact:
     contact.push(element);
     let confirmEmbed = createContactEmbed(element, element.isAlreadyPresent());
     Utils.interaReply({content: "", embeds: [confirmEmbed], components: []}, intera);
-
-    writeFileSync('./data/contacts.json', JSON.stringify(contact));
 }
 
 function createContactEmbed(element:contactSheet, present:boolean) {
@@ -144,18 +142,33 @@ async function deleteContactElement(intera:ChatInputCommandInteraction, contact:
         return Utils.interaReply(Constants.text.contacts.memberNotFound, intera);
 
     let profiles = findContactElement(pseudo, member.user, contact);
-    if(typeof profiles == 'string') return Utils.interaReply(profiles as string, intera);
+    if(typeof profiles === "string")
+        return Utils.interaReply(profiles, intera);
 
+    let finalResponse:string;
     switch(profiles.length) {
         case 0:
             return Utils.interaReply(Constants.text.errors.errorFetchMember, intera);
 
         case 1:
+            let pseudo = profiles[0].pseudo;
+            let sheetIndex = contact.findIndex(e => e.pseudo == pseudo);
+            contact.splice(sheetIndex, 1);
+            finalResponse = `La fiche contact du compte **${pseudo}** a bien été supprimée`
             break;
         
         default:
+            let deletedSheets:string[] = [];
+            for(let profile of profiles) {
+                let sheetIndex = contact.findIndex(e => e.pseudo == profile.pseudo);
+                contact.splice(sheetIndex, 1);
+                deletedSheets.push(profile.pseudo);
+            }
+            finalResponse = `Les fiches contacts des comptes ${deletedSheets.join(', ')} ont bien été supprimées`;
             break;
     }
+
+    Utils.interaReply(finalResponse, intera);
 }
 
 
