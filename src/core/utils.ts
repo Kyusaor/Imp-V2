@@ -112,7 +112,9 @@ export class contactSheet {
     displayMates() {
         let output:string = "";
         this.mates?.forEach(e => output += `<@${e}>, `)
-        return output.slice(0, -2);
+        output.length !== 0 ?
+            output = output.slice(0, -2) : output = `Aucun contact fourni`;
+        return output;
     }
 
     displayPhoneNumber() {
