@@ -9,6 +9,7 @@ export abstract class Constants {
         R4_CHECKOUT: "1076898278219722812",
         ERRORS_LOGS: "1076152712384745492",
         AUTO_ROLE: "1076898278219722812",  //"808743465395421204"
+        ANNUAIRE_LIST: "1076898278219722812" // "801329985113030687"
     }
 
     static readonly rolesId = {
@@ -58,6 +59,7 @@ export abstract class Constants {
             unavailableCommand: "Module de commande indisponible",
         },
         commands: {
+            annuaireListSuccess: "L'annuaire a bien été envoyé",
             autoroleSuccess: "Le panneau d'autorole a bien été défini",
             autoroleNoProvidedRoles: "Aucun nouveau rôle n'a été donné, vos rôles sont donc restés tels quels",
             cancelledCommand: "Commande annulée",
