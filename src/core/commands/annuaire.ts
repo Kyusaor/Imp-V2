@@ -258,7 +258,7 @@ async function askToReplace(element:contactSheet, intera:ChatInputCommandInterac
 function baseListEmbedBuilder(db:contactSheet[]) {
     let embed = new EmbedBuilder()
         .setTitle("**Annuaire Imp**")
-        .setDescription("Voilà la liste des contacts des membres de la guilde")
+        .setDescription("Voilà la liste des contacts des membres de la guilde\nLe profil se détaille comme suit:\n**Pseudo ingame | discord | numéro | renfo | contacts à appeler**")
         .setThumbnail(ImpServer.iconURL())
         .setFooter({text: "Faites la commande /contact pour retrouver facilement un membre !"})
 
