@@ -123,8 +123,8 @@ export async function run(intera:ChatInputCommandInteraction) {
             await editContactElement(intera, contact);
             break;
 
-        case 'list':
-            listContact(intera, contact);
+        case 'liste':
+            await listContact(intera, contact);
             break;
     }
     
@@ -198,7 +198,7 @@ async function listContact(intera:ChatInputCommandInteraction, contact:contactSh
         return Utils.interaReply("Le salon est introuvable", intera);
 
     listChannel.send({embeds: [embed]})
-    Utils.interaReply(Constants.text.commands.annuaireListSuccess, intera);
+    Utils.interaReply({ content: Constants.text.commands.annuaireListSuccess, ephemeral: true }, intera);
 }
 
 
@@ -266,6 +266,7 @@ function baseListEmbedBuilder(db:contactSheet[]) {
     let embedFieldList:EmbedField[] = []
     for(let element of sortedDb) {
         
+        Object.setPrototypeOf(element, contactSheet.prototype);
         let firstLetter = element.pseudo.slice(0, 1);
         if(firstLetter.match(/[a-z]/i))
             firstLetter = 'Chiffres et caractères spéciaux';
