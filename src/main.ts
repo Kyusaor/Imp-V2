@@ -1,4 +1,4 @@
-import { Client, Guild, InteractionType, TextBasedChannel, User } from "discord.js";
+import { Client, Guild, InteractionType, Message, TextBasedChannel, User } from "discord.js";
 import { Config } from "../data/config.js";
 import { Constants } from "./core/models/constants.js";
 import { Methods } from "./core/models/methods.js";
@@ -11,6 +11,7 @@ import { Utils } from "./core/utils.js";
 let kyu:User
 let ImpServer:Guild;
 let errorsChannel: TextBasedChannel;
+let annuaireMsg:Message;
 
 let bot = new Client(Config.clientParam);
 bot.login(Config.token);
@@ -22,6 +23,8 @@ bot.on('ready', async () => {
     kyu = await bot.users.fetch(Constants.kyu);
     ImpServer = await bot.guilds.fetch(Constants.ImpServerId);
     errorsChannel = await bot.channels.fetch(Constants.channelsId.ERRORS_LOGS) as TextBasedChannel;
+    let annuaireChan = await bot.channels.fetch(Constants.channelsId.ANNUAIRE_LIST) as TextBasedChannel;
+    annuaireMsg = await (await annuaireChan.messages.fetch({limit: 1})).last() as Message;
     console.log(Utils.displayDate(new Date(), "console") + bot.user?.username + Constants.text.console.READY);
 });
 
@@ -75,4 +78,4 @@ async function sendErrorLog(error: unknown) {
         await errorsChannel.send(error.stack.toString()).catch(e => console.log("erreur lors de l'envoi"));
 }
 
-export { bot, ImpServer };
+export { bot, ImpServer, annuaireMsg };
