@@ -1,4 +1,4 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction, ComponentType, EmbedBuilder, EmbedField, SlashCommandBuilder } from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction, ComponentType, EmbedBuilder, EmbedField, SlashCommandBuilder, TextChannel } from "discord.js";
 import { readFileSync, writeFileSync } from "fs";
 import { ImpServer } from "../../main.js";
 import { Constants } from "../models/constants.js";
@@ -10,7 +10,7 @@ export const CommandBuilder = new SlashCommandBuilder()
     .setDescription(`Gestion de l'annuaire de guilde`)
     .setDMPermission(false)
     .setDefaultMemberPermissions(0)
-    .addSubcommand(sub => sub
+    .addSubcommand(create => create
         .setName(`create`)
         .setDescription(`Ajoute un élément à l'annuaire`)
         .addStringOption(opt => opt
@@ -51,7 +51,7 @@ export const CommandBuilder = new SlashCommandBuilder()
             .setDescription(`Les personnes à contacter (à mentionner dans le champs)`)
         )
     )
-    .addSubcommand(sub => sub
+    .addSubcommand(delet => delet
         .setName(`delete`)
         .setDescription(`Supprime un seul ou tous les comptes d'un membre de l'annuaire`)
         .addStringOption(opt => opt
@@ -64,7 +64,7 @@ export const CommandBuilder = new SlashCommandBuilder()
             .setDescription(`Le compte discord du membre (supprime tous les comptes liés)`)
         )
     )
-    .addSubcommand(sub => sub
+    .addSubcommand(edit => edit
         .setName(`edit`)
         .setDescription(`Modifie un élément de l'annuaire`)
         .addStringOption(opt => opt
@@ -102,6 +102,10 @@ export const CommandBuilder = new SlashCommandBuilder()
             .setName(`contact`)
             .setDescription(`Les personnes à contacter (à mentionner dans le champs)`)
         )
+    )
+    .addSubcommand(list => list
+        .setName('liste')
+        .setDescription('Renvoie le message de liste')
     )
 
 export async function run(intera:ChatInputCommandInteraction) {
@@ -188,7 +192,13 @@ async function deleteContactElement(intera:ChatInputCommandInteraction, contact:
 }
 
 async function listContact(intera:ChatInputCommandInteraction, contact:contactSheet[]) {
-    let embed
+    let embed = baseListEmbedBuilder(contact);
+    let listChannel = await intera.guild?.channels.fetch(Constants.channelsId.ANNUAIRE_LIST) as TextChannel;
+    if(!listChannel)
+        return Utils.interaReply("Le salon est introuvable", intera);
+
+    listChannel.send({embeds: [embed]})
+    Utils.interaReply(Constants.text.commands.annuaireListSuccess, intera);
 }
 
 
