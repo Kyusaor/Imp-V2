@@ -145,6 +145,20 @@ export class contactSheet {
             },
         ]
     }
+
+    static formatDbVariableName(variable:string) {
+        let names = {
+            user: "Compte discord",
+            phone: "Numéro de téléphone",
+            origin: "Préfixe téléphonique national",
+            renfo: "Troupes à envoyer en renfo",
+            mates: "Membres à contacter",
+        }
+        let response:string;
+        Object.keys(names).includes(variable) ?
+            response = names[variable as keyof typeof names] : response = 'ERROR_NAME';
+        return response;
+    }
 }
 
 function displayDaysSince(date:number) {
