@@ -1,6 +1,6 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction, ComponentType, EmbedBuilder, EmbedField, SlashCommandBuilder, TextChannel } from "discord.js";
 import { readFileSync, writeFileSync } from "fs";
-import { ImpServer } from "../../main.js";
+import { annuaireMsg, ImpServer } from "../../main.js";
 import { Constants } from "../models/constants.js";
 import { Utils, contactSheet } from "../utils.js";
 import { findContactElement } from "./contact.js";
@@ -152,6 +152,7 @@ async function createContactElement(intera:ChatInputCommandInteraction, contact:
     contact.push(element);
     let confirmEmbed = createContactEmbed(element, element.isAlreadyPresent());
     Utils.interaReply({content: "", embeds: [confirmEmbed], components: []}, intera);
+    await editListMsg(contact, intera);
 }
 
 async function deleteContactElement(intera:ChatInputCommandInteraction, contact:contactSheet[]) {
@@ -187,7 +188,7 @@ async function deleteContactElement(intera:ChatInputCommandInteraction, contact:
             finalResponse = `Les fiches contacts des comptes ${deletedSheets.join(', ')} ont bien été supprimées`;
             break;
     }
-
+    await editListMsg(contact, intera);
     Utils.interaReply(finalResponse, intera);
 }
 
@@ -203,7 +204,7 @@ async function listContact(intera:ChatInputCommandInteraction, contact:contactSh
 
 
 //Others f(x)
-function applyEditChanges (db:contactSheet[], old:contactSheet, changes:{
+function applyDbEditChanges (db:contactSheet[], old:contactSheet, changes:{
     user: string;
     origin: string;
     phone: string;
@@ -347,7 +348,19 @@ async function editContactElement(intera:ChatInputCommandInteraction, contact: c
         .setDescription(`Voici la liste des modifications`)
         .addFields(fieldList)
 
-    applyEditChanges(contact, oldContact[0], input);
+    applyDbEditChanges(contact, oldContact[0], input);
     
     Utils.interaReply({ content: "", embeds: [embed], components: [] }, intera);
+}
+
+async function editListMsg(db:contactSheet[], intera:ChatInputCommandInteraction) {
+    let embed = baseListEmbedBuilder(db);
+    try {
+        await annuaireMsg.edit({embeds: [embed]})
+    }
+    catch (err) {
+        console.log("Impossible de modifier la liste")
+        console.log(err)
+        intera.channel?.send("Impossible de mettre l'annuaire à jour")
+    }
 }
