@@ -268,7 +268,7 @@ function baseListEmbedBuilder(db:contactSheet[]) {
         
         Object.setPrototypeOf(element, contactSheet.prototype);
         let firstLetter = element.pseudo.slice(0, 1);
-        if(firstLetter.match(/[a-z]/i))
+        if(!firstLetter.match(/[a-z]/i))
             firstLetter = 'Chiffres et caractères spéciaux';
         let fieldValue = `\n${element.pseudo} | <@${element.user}> | ${element.displayPhoneNumber()} | ${element.renfo} | ${element.displayMates()}`;
 
