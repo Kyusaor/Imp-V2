@@ -188,7 +188,7 @@ async function deleteContactElement(intera:ChatInputCommandInteraction, contact:
 }
 
 async function listContact(intera:ChatInputCommandInteraction, contact:contactSheet[]) {
-    
+    let embed
 }
 
 
@@ -257,19 +257,21 @@ function baseListEmbedBuilder(db:contactSheet[]) {
     for(let element of sortedDb) {
         
         let firstLetter = element.pseudo.slice(0, 1);
-        let fieldValue = `\n${element.pseudo} | <@${element.user}> | ${element.displayPhoneNumber()} | ${element.renfo} | ${element.displayMates()}`
+        if(firstLetter.match(/[a-z]/i))
+            firstLetter = 'Chiffres et caractères spéciaux';
+        let fieldValue = `\n${element.pseudo} | <@${element.user}> | ${element.displayPhoneNumber()} | ${element.renfo} | ${element.displayMates()}`;
 
         if(embedFieldList[embedFieldList.length - 1]?.name !== `[${firstLetter}]`)
-            embedFieldList.push({ name: `[${firstLetter}]`, value: fieldValue, inline: false })
+            embedFieldList.push({ name: `[${firstLetter}]`, value: fieldValue, inline: false });
         else {
             let previousValue = embedFieldList[embedFieldList.length - 1];
-            embedFieldList[embedFieldList.length - 1] = { name: previousValue.name, value: `${previousValue.value + fieldValue}`, inline: false }
+            embedFieldList[embedFieldList.length - 1] = { name: previousValue.name, value: `${previousValue.value + fieldValue}`, inline: false };
         }
 
     }
 
     embed.addFields(embedFieldList);
-    return embed
+    return embed;
 }
 
 function createContactEmbed(element:contactSheet, present:boolean) {
