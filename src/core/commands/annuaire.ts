@@ -1,4 +1,4 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction, ComponentType, EmbedBuilder, embedLength, SlashCommandBuilder } from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction, ComponentType, EmbedBuilder, EmbedField, embedLength, SlashCommandBuilder } from "discord.js";
 import { readFileSync, writeFileSync } from "fs";
 import { Constants } from "../models/constants.js";
 import { Utils, contactSheet } from "../utils.js";
@@ -63,6 +63,45 @@ export const CommandBuilder = new SlashCommandBuilder()
             .setDescription(`Le compte discord du membre (supprime tous les comptes liés)`)
         )
     )
+    .addSubcommand(sub => sub
+        .setName(`edit`)
+        .setDescription(`Modifie un élément de l'annuaire`)
+        .addStringOption(opt => opt
+            .setName(`pseudo`)
+            .setDescription(`Le pseudo du contact`)
+            .setAutocomplete(true)
+            .setRequired(true)
+        )
+        .addUserOption(opt => opt
+            .setName(`discord`)
+            .setDescription(`Le compte discord du membre`)
+        )
+        .addStringOption(opt => opt
+            .setName('pays')
+            .setDescription(`Le pays d'origine du membre`)
+            .addChoices(
+                {name: `France`, value: `+33`},
+                {name: `Belgique`, value: `+32`},
+                {name: `Algérie`, value: `+213`},
+                {name: `Maroc`, value: `+212`},
+                {name: `Canada`, value: `+1`},
+                {name: `Suisse`, value: `+41`},
+                {name: `Sénégal`, value: `+221`},
+            )
+        )
+        .addStringOption(opt => opt
+            .setName('numero')
+            .setDescription(`Le téléphone du membre (commencer par 0)`)
+        )
+        .addStringOption(opt => opt
+            .setName(`renfo`)
+            .setDescription(`Le type de renfos à envoyer`)
+        )
+        .addStringOption(opt => opt
+            .setName(`contact`)
+            .setDescription(`Les personnes à contacter (à mentionner dans le champs)`)
+        )
+    )
 
 export async function run(intera:ChatInputCommandInteraction) {
     let contact: contactSheet[] = JSON.parse(readFileSync('./data/contacts.json', 'utf-8'));
@@ -74,6 +113,10 @@ export async function run(intera:ChatInputCommandInteraction) {
         case 'delete':
             await deleteContactElement(intera, contact);
             break;
+            
+        case 'edit':
+            await editContactElement(intera, contact);
+            break;
 
         case 'list':
             listContact(intera, contact);
@@ -83,6 +126,37 @@ export async function run(intera:ChatInputCommandInteraction) {
     writeFileSync('./data/contacts.json', JSON.stringify(contact))
 }
 
+function applyEditChanges (db:contactSheet[], old:contactSheet, changes:{
+    user: string;
+    origin: string;
+    phone: string;
+    renfo: string | null;
+    mates: string[] | null;
+}) {
+
+    let newElementData:{
+        pseudo: string,
+        user: string,
+        phone: string,
+        origin: string,
+        renfo: string | null,
+        mates: string[] | null
+    } = { pseudo: "", user: "", phone: "", origin: "", renfo: null, mates: null };
+
+    for(let dataName of Object.keys(old)) {
+        if(!Object.keys(changes).includes(dataName)) continue;
+        let newValue = changes[dataName as keyof typeof changes] as any;
+        let oldValue = old[dataName as keyof typeof changes] as any;
+        if (newValue && newValue !== oldValue)
+            newElementData[dataName as keyof typeof newElementData] = newValue;
+        else if (oldValue)
+            newElementData[dataName as keyof typeof newElementData] = oldValue;
+    }
+    let newElement = new contactSheet(old.pseudo, newElementData.user, newElementData.phone, newElementData.origin, newElementData.renfo, newElementData.mates);
+
+    let oldIndex = db.findIndex(e => e.pseudo == newElement.pseudo);
+    db[oldIndex] = newElement;
+}
 
 async function createContactElement(intera:ChatInputCommandInteraction, contact:contactSheet[]) {
     let pseudo = intera.options.getString('pseudo') as string;
@@ -112,6 +186,32 @@ function createContactEmbed(element:contactSheet, present:boolean) {
     return new EmbedBuilder()
         .setTitle(title)
         .addFields(element.createEmbedFields())
+}
+
+function createEditFieldList(oldData: contactSheet, newData: {
+    user: string | null;
+    origin: string | null;
+    phone: string | null;
+    renfo: string | null;
+    mates: string[] | null;
+}) {
+
+    let field: EmbedField[] = [];
+    for (let fieldName of Object.keys(newData)) {
+        let newValue = newData[fieldName as keyof typeof newData];
+        let oldValue = oldData[fieldName as keyof typeof oldData];
+        if(newValue && fieldName == "mates" && typeof newValue !== 'string')
+            newValue = newValue.join(', ');
+        if (!oldValue || oldValue.length == 0)
+            oldValue = `Non défini`;
+
+        let name = contactSheet.formatDbVariableName(fieldName);
+        if (!newValue || newValue == oldValue)
+            field.push({ name: name, value: oldValue as string, inline: false })
+        else
+            field.push({ name: `${name} (modifié)`, value: `${oldValue}\n=>\n${newValue}`, inline: false })
+    }
+    return field;
 }
 
 async function askToReplace(element:contactSheet, intera:ChatInputCommandInteraction) {
@@ -171,6 +271,38 @@ async function deleteContactElement(intera:ChatInputCommandInteraction, contact:
     Utils.interaReply(finalResponse, intera);
 }
 
+async function editContactElement(intera:ChatInputCommandInteraction, contact: contactSheet[]) {
+    let pseudo = intera.options.getString('pseudo') as string;
+    let user = intera.options.getUser('discord')?.id as string;
+    let origin = intera.options.getString('pays') as string;
+    let phone = intera.options.getString('numero') as string;
+    let renfo = intera.options.getString('renfo');
+    let mates = intera.options.getString('contact');
+
+
+    let element = new contactSheet (pseudo, user, phone, origin, renfo, Utils.getMentionnedIdsFromString(mates, "user"));
+    let input = { user, origin, phone, renfo, mates: Utils.getMentionnedIdsFromString(mates, "user") };
+
+    if(!element.isAlreadyPresent())
+        return Utils.interaReply(Constants.text.contacts.memberNotFound, intera);
+
+    let validation:boolean;
+    validation = await askToReplace(element, intera);
+    if(!validation)
+        return Utils.interaReply({ content: Constants.text.commands.cancelledCommand, components: [] }, intera);
+    
+    let oldContact = findContactElement(pseudo, null, contact) as contactSheet[];
+    let fieldList = createEditFieldList(oldContact[0], input);
+
+    let embed = new EmbedBuilder()
+        .setTitle(`Contact modifié!`)
+        .setDescription(`Voici la liste des modifications`)
+        .addFields(fieldList)
+
+    applyEditChanges(contact, oldContact[0], input);
+    
+    Utils.interaReply({ content: "", embeds: [embed], components: [] }, intera);
+}
 
 async function listContact(intera:ChatInputCommandInteraction, contact:contactSheet[]) {
     
