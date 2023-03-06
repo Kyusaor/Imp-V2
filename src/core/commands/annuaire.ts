@@ -126,38 +126,6 @@ export async function run(intera:ChatInputCommandInteraction) {
     writeFileSync('./data/contacts.json', JSON.stringify(contact))
 }
 
-function applyEditChanges (db:contactSheet[], old:contactSheet, changes:{
-    user: string;
-    origin: string;
-    phone: string;
-    renfo: string | null;
-    mates: string[] | null;
-}) {
-
-    let newElementData:{
-        pseudo: string,
-        user: string,
-        phone: string,
-        origin: string,
-        renfo: string | null,
-        mates: string[] | null
-    } = { pseudo: "", user: "", phone: "", origin: "", renfo: null, mates: null };
-
-    for(let dataName of Object.keys(old)) {
-        if(!Object.keys(changes).includes(dataName)) continue;
-        let newValue = changes[dataName as keyof typeof changes] as any;
-        let oldValue = old[dataName as keyof typeof changes] as any;
-        if (newValue && newValue !== oldValue)
-            newElementData[dataName as keyof typeof newElementData] = newValue;
-        else if (oldValue)
-            newElementData[dataName as keyof typeof newElementData] = oldValue;
-    }
-    let newElement = new contactSheet(old.pseudo, newElementData.user, newElementData.phone, newElementData.origin, newElementData.renfo, newElementData.mates);
-
-    let oldIndex = db.findIndex(e => e.pseudo == newElement.pseudo);
-    db[oldIndex] = newElement;
-}
-
 async function createContactElement(intera:ChatInputCommandInteraction, contact:contactSheet[]) {
     let pseudo = intera.options.getString('pseudo') as string;
     let discord = intera.options.getUser('discord')?.id as string;
@@ -178,60 +146,6 @@ async function createContactElement(intera:ChatInputCommandInteraction, contact:
     contact.push(element);
     let confirmEmbed = createContactEmbed(element, element.isAlreadyPresent());
     Utils.interaReply({content: "", embeds: [confirmEmbed], components: []}, intera);
-}
-
-function createContactEmbed(element:contactSheet, present:boolean) {
-    let title:string;
-    present ? title = `Contact modifié !` : title = `Contact ajouté à l'annuaire!`;
-    return new EmbedBuilder()
-        .setTitle(title)
-        .addFields(element.createEmbedFields())
-}
-
-function createEditFieldList(oldData: contactSheet, newData: {
-    user: string | null;
-    origin: string | null;
-    phone: string | null;
-    renfo: string | null;
-    mates: string[] | null;
-}) {
-
-    let field: EmbedField[] = [];
-    for (let fieldName of Object.keys(newData)) {
-        let newValue = newData[fieldName as keyof typeof newData];
-        let oldValue = oldData[fieldName as keyof typeof oldData];
-        if(newValue && fieldName == "mates" && typeof newValue !== 'string')
-            newValue = newValue.join(', ');
-        if (!oldValue || oldValue.length == 0)
-            oldValue = `Non défini`;
-
-        let name = contactSheet.formatDbVariableName(fieldName);
-        if (!newValue || newValue == oldValue)
-            field.push({ name: name, value: oldValue as string, inline: false })
-        else
-            field.push({ name: `${name} (modifié)`, value: `${oldValue}\n=>\n${newValue}`, inline: false })
-    }
-    return field;
-}
-
-async function askToReplace(element:contactSheet, intera:ChatInputCommandInteraction) {
-    let buttons = new ActionRowBuilder<ButtonBuilder>()
-        .addComponents(
-            new ButtonBuilder()
-                .setCustomId('replace-contact-yes')
-                .setLabel('Oui')
-                .setStyle(ButtonStyle.Success),
-
-            new ButtonBuilder()
-                .setCustomId('replace-contact-no')
-                .setLabel('Non')
-                .setStyle(ButtonStyle.Danger)
-        )
-
-    intera.reply({ content: `${Constants.text.contacts.askToReplace}${element.pseudo}?`, components: [buttons] })
-
-    let response = await intera.channel?.awaitMessageComponent({ componentType: ComponentType.Button, filter: (button) => button.user.id === intera.user.id, time: 30000 })
-    return !(!response || response.customId.endsWith('no'))
 }
 
 async function deleteContactElement(intera:ChatInputCommandInteraction, contact:contactSheet[]) {
@@ -271,6 +185,100 @@ async function deleteContactElement(intera:ChatInputCommandInteraction, contact:
     Utils.interaReply(finalResponse, intera);
 }
 
+async function listContact(intera:ChatInputCommandInteraction, contact:contactSheet[]) {
+    
+}
+
+function applyEditChanges (db:contactSheet[], old:contactSheet, changes:{
+    user: string;
+    origin: string;
+    phone: string;
+    renfo: string | null;
+    mates: string[] | null;
+}) {
+
+    let newElementData:{
+        pseudo: string,
+        user: string,
+        phone: string,
+        origin: string,
+        renfo: string | null,
+        mates: string[] | null
+    } = { pseudo: "", user: "", phone: "", origin: "", renfo: null, mates: null };
+
+    for(let dataName of Object.keys(old)) {
+        if(!Object.keys(changes).includes(dataName)) continue;
+        let newValue = changes[dataName as keyof typeof changes] as any;
+        let oldValue = old[dataName as keyof typeof changes] as any;
+        if (newValue && newValue !== oldValue)
+            newElementData[dataName as keyof typeof newElementData] = newValue;
+        else if (oldValue)
+            newElementData[dataName as keyof typeof newElementData] = oldValue;
+    }
+    let newElement = new contactSheet(old.pseudo, newElementData.user, newElementData.phone, newElementData.origin, newElementData.renfo, newElementData.mates);
+
+    let oldIndex = db.findIndex(e => e.pseudo == newElement.pseudo);
+    db[oldIndex] = newElement;
+}
+
+async function askToReplace(element:contactSheet, intera:ChatInputCommandInteraction) {
+    let buttons = new ActionRowBuilder<ButtonBuilder>()
+        .addComponents(
+            new ButtonBuilder()
+                .setCustomId('replace-contact-yes')
+                .setLabel('Oui')
+                .setStyle(ButtonStyle.Success),
+
+            new ButtonBuilder()
+                .setCustomId('replace-contact-no')
+                .setLabel('Non')
+                .setStyle(ButtonStyle.Danger)
+        )
+
+    intera.reply({ content: `${Constants.text.contacts.askToReplace}${element.pseudo}?`, components: [buttons] })
+
+    let response = await intera.channel?.awaitMessageComponent({ componentType: ComponentType.Button, filter: (button) => button.user.id === intera.user.id, time: 30000 })
+    return !(!response || response.customId.endsWith('no'))
+}
+
+function baseListEmbedBuilder() {
+
+}
+
+function createContactEmbed(element:contactSheet, present:boolean) {
+    let title:string;
+    present ? title = `Contact modifié !` : title = `Contact ajouté à l'annuaire!`;
+    return new EmbedBuilder()
+        .setTitle(title)
+        .addFields(element.createEmbedFields())
+}
+
+function createEditFieldList(oldData: contactSheet, newData: {
+    user: string | null;
+    origin: string | null;
+    phone: string | null;
+    renfo: string | null;
+    mates: string[] | null;
+}) {
+
+    let field: EmbedField[] = [];
+    for (let fieldName of Object.keys(newData)) {
+        let newValue = newData[fieldName as keyof typeof newData];
+        let oldValue = oldData[fieldName as keyof typeof oldData];
+        if(newValue && fieldName == "mates" && typeof newValue !== 'string')
+            newValue = newValue.join(', ');
+        if (!oldValue || oldValue.length == 0)
+            oldValue = `Non défini`;
+
+        let name = contactSheet.formatDbVariableName(fieldName);
+        if (!newValue || newValue == oldValue)
+            field.push({ name: name, value: oldValue as string, inline: false })
+        else
+            field.push({ name: `${name} (modifié)`, value: `${oldValue}\n=>\n${newValue}`, inline: false })
+    }
+    return field;
+}
+
 async function editContactElement(intera:ChatInputCommandInteraction, contact: contactSheet[]) {
     let pseudo = intera.options.getString('pseudo') as string;
     let user = intera.options.getUser('discord')?.id as string;
@@ -302,8 +310,4 @@ async function editContactElement(intera:ChatInputCommandInteraction, contact: c
     applyEditChanges(contact, oldContact[0], input);
     
     Utils.interaReply({ content: "", embeds: [embed], components: [] }, intera);
-}
-
-async function listContact(intera:ChatInputCommandInteraction, contact:contactSheet[]) {
-    
 }
