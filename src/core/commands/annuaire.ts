@@ -127,6 +127,7 @@ export async function run(intera:ChatInputCommandInteraction) {
     writeFileSync('./data/contacts.json', JSON.stringify(contact))
 }
 
+//Main commands scripts
 async function createContactElement(intera:ChatInputCommandInteraction, contact:contactSheet[]) {
     let pseudo = intera.options.getString('pseudo') as string;
     let discord = intera.options.getUser('discord')?.id as string;
@@ -190,6 +191,8 @@ async function listContact(intera:ChatInputCommandInteraction, contact:contactSh
     
 }
 
+
+//Others f(x)
 function applyEditChanges (db:contactSheet[], old:contactSheet, changes:{
     user: string;
     origin: string;
