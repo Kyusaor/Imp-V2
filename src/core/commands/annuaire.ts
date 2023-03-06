@@ -1,5 +1,6 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction, ComponentType, EmbedBuilder, EmbedField, embedLength, SlashCommandBuilder } from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction, ComponentType, EmbedBuilder, EmbedField, SlashCommandBuilder } from "discord.js";
 import { readFileSync, writeFileSync } from "fs";
+import { ImpServer } from "../../main.js";
 import { Constants } from "../models/constants.js";
 import { Utils, contactSheet } from "../utils.js";
 import { findContactElement } from "./contact.js";
@@ -241,8 +242,31 @@ async function askToReplace(element:contactSheet, intera:ChatInputCommandInterac
     return !(!response || response.customId.endsWith('no'))
 }
 
-function baseListEmbedBuilder() {
+function baseListEmbedBuilder(db:contactSheet[]) {
+    let embed = new EmbedBuilder()
+        .setTitle("**Annuaire Imp**")
+        .setDescription("Voilà la liste des contacts des membres de la guilde")
+        .setThumbnail(ImpServer.iconURL())
+        .setFooter({text: "Faites la commande /contact pour retrouver facilement un membre !"})
 
+    let sortedDb:contactSheet[] = db.sort((a, b) => a.pseudo.localeCompare(b.pseudo));
+    let embedFieldList:EmbedField[] = []
+    for(let element of sortedDb) {
+        
+        let firstLetter = element.pseudo.slice(0, 1);
+        let fieldValue = `\n${element.pseudo} | <@${element.user}> | ${element.displayPhoneNumber()} | ${element.renfo} | ${element.displayMates()}`
+
+        if(embedFieldList[embedFieldList.length - 1]?.name !== `[${firstLetter}]`)
+            embedFieldList.push({ name: `[${firstLetter}]`, value: fieldValue, inline: false })
+        else {
+            let previousValue = embedFieldList[embedFieldList.length - 1];
+            embedFieldList[embedFieldList.length - 1] = { name: previousValue.name, value: `${previousValue.value + fieldValue}`, inline: false }
+        }
+
+    }
+
+    embed.addFields(embedFieldList);
+    return embed
 }
 
 function createContactEmbed(element:contactSheet, present:boolean) {
