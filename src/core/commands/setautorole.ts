@@ -52,7 +52,7 @@ function createPannelEmbed () {
             },
             {
                 label: "Solo war",
-                description: "LEs partages de cibles solo",
+                description: "Les partages de cibles solo",
                 value: "solo"
             },
         ])
