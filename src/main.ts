@@ -20,12 +20,17 @@ bot.login(Config.token);
 
 //Executed at boot
 bot.on('ready', async () => {
-    kyu = await bot.users.fetch(Constants.kyu);
-    ImpServer = await bot.guilds.fetch(Constants.ImpServerId);
-    errorsChannel = await bot.channels.fetch(Constants.channelsId.ERRORS_LOGS) as TextBasedChannel;
-    let annuaireChan = await bot.channels.fetch(Constants.channelsId.ANNUAIRE_LIST) as TextBasedChannel;
-    annuaireMsg = await (await annuaireChan.messages.fetch({limit: 1})).last() as Message;
-    console.log(Utils.displayDate(new Date(), "console") + bot.user?.username + Constants.text.console.READY);
+    try {
+        kyu = await bot.users.fetch(Constants.kyu);
+        ImpServer = await bot.guilds.fetch(Constants.ImpServerId);
+        errorsChannel = await bot.channels.fetch(Constants.channelsId.ERRORS_LOGS) as TextBasedChannel;
+        let annuaireChan = await bot.channels.fetch(Constants.channelsId.ANNUAIRE_LIST) as TextBasedChannel;
+        annuaireMsg = await (await annuaireChan.messages.fetch({limit: 1})).last() as Message;
+        console.log(Utils.displayDate(new Date(), "console") + bot.user?.username + Constants.text.console.READY);
+        }
+    catch (error) {
+        await sendErrorLog(error);
+    }
 });
 
 
