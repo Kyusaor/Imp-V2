@@ -268,8 +268,8 @@ function baseListEmbedBuilder(db:contactSheet[]) {
     for(let element of sortedDb) {
         
         Object.setPrototypeOf(element, contactSheet.prototype);
-        let firstLetter = element.pseudo.slice(0, 1);
-        if(!firstLetter.match(/[a-z]/i))
+        let firstLetter = element.pseudo.slice(0, 1).toUpperCase();
+        if(!firstLetter.match(/[A-Z]/i))
             firstLetter = 'Chiffres et caractères spéciaux';
         let fieldValue = `\n${element.pseudo} | <@${element.user}> | ${element.displayPhoneNumber()} | ${element.renfo} | ${element.displayMates()}`;
 
