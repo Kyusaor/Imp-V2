@@ -271,7 +271,7 @@ function baseListEmbedBuilder(db:contactSheet[]) {
         let firstLetter = element.pseudo.slice(0, 1).toUpperCase();
         if(!firstLetter.match(/[A-Z]/i))
             firstLetter = 'Chiffres et caractères spéciaux';
-        let fieldValue = `\n${element.pseudo} | <@${element.user}> | ${element.displayPhoneNumber()} | ${element.renfo} | ${element.displayMates()}`;
+        let fieldValue = `\n👤 ${element.pseudo} | <@${element.user}> | ${element.displayPhoneNumber()} | ${element.renfo} | ${element.displayMates()}`;
 
         if(embedFieldList[embedFieldList.length - 1]?.name !== `[${firstLetter}]`)
             embedFieldList.push({ name: `[${firstLetter}]`, value: fieldValue, inline: false });
