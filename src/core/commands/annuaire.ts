@@ -28,13 +28,13 @@ export const CommandBuilder = new SlashCommandBuilder()
             .setDescription(`Le pays d'origine du membre`)
             .setRequired(true)
             .addChoices(
-                {name: `France`, value: `+33`},
-                {name: `Belgique`, value: `+32`},
-                {name: `Algérie`, value: `+213`},
-                {name: `Maroc`, value: `+212`},
-                {name: `Canada`, value: `+1`},
-                {name: `Suisse`, value: `+41`},
-                {name: `Sénégal`, value: `+221`},
+                {name: `France (+33)`, value: `+33`},
+                {name: `Belgique (+32)`, value: `+32`},
+                {name: `Algérie (+213)`, value: `+213`},
+                {name: `Maroc (+212)`, value: `+212`},
+                {name: `Canada (+1)`, value: `+1`},
+                {name: `Suisse (+41)`, value: `+41`},
+                {name: `Sénégal (+221)`, value: `+221`},
                 {name: 'Autre', value: 'other'}
             )
         )
@@ -82,13 +82,13 @@ export const CommandBuilder = new SlashCommandBuilder()
             .setName('pays')
             .setDescription(`Le pays d'origine du membre`)
             .addChoices(
-                {name: `France`, value: `+33`},
-                {name: `Belgique`, value: `+32`},
-                {name: `Algérie`, value: `+213`},
-                {name: `Maroc`, value: `+212`},
-                {name: `Canada`, value: `+1`},
-                {name: `Suisse`, value: `+41`},
-                {name: `Sénégal`, value: `+221`},
+                {name: `France (+33)`, value: `+33`},
+                {name: `Belgique (+32)`, value: `+32`},
+                {name: `Algérie (+213)`, value: `+213`},
+                {name: `Maroc (+212)`, value: `+212`},
+                {name: `Canada (+1)`, value: `+1`},
+                {name: `Suisse (+41)`, value: `+41`},
+                {name: `Sénégal (+221)`, value: `+221`},
                 {name: 'Autre', value: 'other'}
             )
         )
