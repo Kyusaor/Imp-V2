@@ -308,7 +308,7 @@ function createEditFieldList(oldData: contactSheet, newData: {
     for (let fieldName of Object.keys(newData)) {
         let newValue = newData[fieldName as keyof typeof newData];
         let oldValue = oldData[fieldName as keyof typeof oldData];
-        if(newValue && fieldName == "mates" && typeof newValue !== 'string')
+        if(newValue && (fieldName == "mates") && typeof newValue !== 'string')
             newValue = newValue.join(', ');
         if (!oldValue || oldValue.length == 0)
             oldValue = `Non défini`;
