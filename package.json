@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/Kyusakick/Imp-V2#readme",
   "dependencies": {
-    "discord.js": "^14.7.1",
+    "discord.js": "14.14.1",
     "fs": "^0.0.1-security",
     "typescript": "^4.9.5",
     "yesno": "^0.4.0"
