@@ -118,7 +118,7 @@ export class contactSheet {
     }
 
     displayPhoneNumber() {
-        return `${this.origin}${this.phone.slice(1)}`
+        return `${this.origin == "other" ? "" : this.origin}${this.phone.slice(1)}`
     }
 
     createEmbedFields() {
