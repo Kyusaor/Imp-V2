@@ -315,7 +315,7 @@ function createEditFieldList(oldData: contactSheet, newData: {
 
         let name = contactSheet.formatDbVariableName(fieldName);
         if (!newValue || newValue == oldValue)
-            field.push({ name: name, value: oldValue as string, inline: false })
+            field.push({ name: name, value: oldValue.toString(), inline: false })
         else
             field.push({ name: `${name} (modifié)`, value: `${oldValue}\n=>\n${newValue}`, inline: false })
     }
