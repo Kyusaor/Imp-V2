@@ -35,6 +35,7 @@ export const CommandBuilder = new SlashCommandBuilder()
                 {name: `Canada`, value: `+1`},
                 {name: `Suisse`, value: `+41`},
                 {name: `Sénégal`, value: `+221`},
+                {name: 'Autre', value: ''}
             )
         )
         .addStringOption(opt => opt
@@ -88,6 +89,7 @@ export const CommandBuilder = new SlashCommandBuilder()
                 {name: `Canada`, value: `+1`},
                 {name: `Suisse`, value: `+41`},
                 {name: `Sénégal`, value: `+221`},
+                {name: 'Autre', value: ''}
             )
         )
         .addStringOption(opt => opt
