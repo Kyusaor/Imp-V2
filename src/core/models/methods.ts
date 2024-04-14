@@ -114,7 +114,7 @@ export class Methods {
 
                 intera.reply({ content: Constants.text.newMember.askNickname, components: [Utils.generateYesNoButtons("askNickname")], ephemeral: true });
 
-                let nick = await intera.channel?.awaitMessageComponent({ filter: (inter) => inter.user.id == intera.user.id && inter.customId.startsWith("askNickname"), time: 60000, componentType: ComponentType.Button })
+                let nick = await intera.channel?.awaitMessageComponent({ filter: (inter) => inter.user.id == intera.user.id && inter.customId.startsWith("askNickname"), time: 60000, componentType: ComponentType.Button }).catch(e => e)
                 if (!nick)
                     return intera.editReply({ content: Constants.text.newMember.cancelNickname, components: [] });
                 if (nick.customId.endsWith("no")) {
