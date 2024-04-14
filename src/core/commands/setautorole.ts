@@ -1,5 +1,4 @@
 import { ActionRowBuilder, CommandInteraction, EmbedBuilder, MessageCreateOptions, MessagePayload, SlashCommandBuilder, StringSelectMenuBuilder, TextChannel } from "discord.js";
-import { bot } from "../../main.js";
 import { Constants } from "../models/constants.js";
 
 export const CommandBuilder = new SlashCommandBuilder()

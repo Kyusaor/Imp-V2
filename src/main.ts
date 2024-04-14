@@ -4,6 +4,7 @@ import { Constants } from "./core/models/constants.js";
 import { Methods } from "./core/models/methods.js";
 
 import { Utils } from "./core/utils.js";
+import { readFileSync } from "fs";
 
 
 
@@ -14,6 +15,7 @@ let errorsChannel: TextBasedChannel;
 let annuaireMsg:Message;
 
 let bot = new Client(Config.clientParam);
+let roleData = JSON.parse(readFileSync(`./data/rolesData.json`, 'utf-8')) as Record<string, string[]>;
 bot.login(Config.token);
 
 
@@ -53,7 +55,7 @@ bot.on('interactionCreate', async intera => {
                 break;
 
             case InteractionType.ApplicationCommandAutocomplete:
-                await Methods.autocompleteHandler(intera);
+                await Utils.autocompleteManager(intera);
                 break;
             }
         
@@ -83,4 +85,4 @@ async function sendErrorLog(error: unknown) {
         await errorsChannel.send(error.stack.toString()).catch(e => console.log("erreur lors de l'envoi"));
 }
 
-export { bot, ImpServer, annuaireMsg };
+export { bot, ImpServer, annuaireMsg, roleData };

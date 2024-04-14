@@ -30,6 +30,7 @@ if(todo) {
 		) as RestOrArray<SlashCommandBuilder>;
 
 		console.log(`${data.length} commandes rechargées avec succès`);
+        process.exit();
     } 
     catch (e) {
         console.log("erreur deploy")
@@ -48,7 +49,8 @@ else {
                 promises.push(rest.delete(deleteUrl as `/${string}`));
             }
                 await Promise.all(promises);
-                return console.log(`${promises.length} commandes supprimées avec succès`);
+                console.log(`${promises.length} commandes supprimées avec succès`);
+                return process.exit();
             }
         );
     }
